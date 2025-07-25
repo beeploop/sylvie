@@ -9,6 +9,7 @@ type App struct {
 type ImageVariants struct {
 	Name   string `yaml:"name"`
 	Width  int    `yaml:"width"`
+	Height int    `yaml:"height"`
 	Format string `yaml:"format"`
 }
 

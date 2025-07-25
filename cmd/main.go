@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	input := "/home/screamour/Videos/huhu.mp4"
 	path := "/home/screamour/repos/go/media-transcoding/config/config.yaml"
 
 	cfg, err := config.Read(path)
@@ -19,8 +20,14 @@ func main() {
 	}
 
 	jobSource := source.NewCLISource()
-	imageProcessor := processors.ImageProcessor{}
-	videoProcessor := processors.VideoProcessor{}
+	jobSource.Queue(input)
+
+	imageProcessor := processors.NewImageProcessor(cfg.App.TempDir)
+	videoProcessor := processors.NewVideoProcessor(
+		cfg.App.TempDir,
+		cfg.App.FfmpegPath,
+		cfg.App.FfprobePath,
+	)
 	diskStorage := storage.NewDiskStorage()
 
 	maestro := orchestrator.NewOrchestrator(

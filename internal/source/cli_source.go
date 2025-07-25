@@ -41,3 +41,7 @@ func (s *CLISource) NextJob() (*models.Job, error) {
 func (s *CLISource) HasNext() bool {
 	return s.index < len(s.sources)
 }
+
+func (s *CLISource) Queue(source string) {
+	s.sources = append(s.sources, source)
+}
