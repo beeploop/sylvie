@@ -1,0 +1,32 @@
+app:
+  ffmpeg_path: "/path/to/ffmpeg"
+  ffprobe_path: "/path/to/ffprobe"
+  temp_dir: "temp"
+
+processing:
+  image:
+    variants:
+      - name: small
+        width: 320
+        format: webp
+      - name: medium
+        width: 640
+        format: jpg
+  video:
+    variants:
+      - name: 360p
+        width: 640
+        height: 360
+        video_bitrate: 800k
+        audio_bitrate: 96k
+        format: mp4
+      - name: 720p
+        width: 1280
+        height: 720
+        video_bitrate: 2500k
+        audio_bitrate: 128k
+        format: mp4
+    thumbnail:
+      time_seconds: 5
+      width: 320
+      format: jpg

@@ -3,6 +3,7 @@ package models
 type MediaType string
 
 const (
-	Image MediaType = "image"
-	Video MediaType = "video"
+	IMAGE   MediaType = "image"
+	VIDEO   MediaType = "video"
+	UNKNOWN MediaType = "unknown"
 )
