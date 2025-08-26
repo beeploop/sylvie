@@ -1,44 +1,56 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"path/filepath"
+	"sync"
 
-	"github.com/beeploop/sylvie/internal/config"
-	"github.com/beeploop/sylvie/internal/orchestrator"
-	"github.com/beeploop/sylvie/internal/processors"
-	"github.com/beeploop/sylvie/internal/source"
-	"github.com/beeploop/sylvie/internal/storage"
+	"github.com/beeploop/sylvie/internal/transcoder"
 )
 
 func main() {
-	input := "/home/screamour/Videos/huhu.mp4"
-	path := "/home/screamour/repos/go/media-transcoding/config/config.yaml"
+	inputFile := "/home/screamour/Videos/unwrapped-beeploop.mp4"
+	outDir := "/home/screamour/repos/go/media-transcoding"
 
-	cfg, err := config.Read(path)
-	if err != nil {
-		log.Fatalf("Error loading config: %s\n", err.Error())
+	resolutions := []transcoder.Resolution{
+		transcoder.RES_1080p,
+		transcoder.RES_720p,
+		transcoder.RES_480p,
+		transcoder.RES_360p,
+		transcoder.RES_240p,
+		transcoder.RES_144p,
 	}
 
-	jobSource := source.NewCLISource()
-	jobSource.Queue(input)
+	doneChan := make(chan string)
+	var wg sync.WaitGroup
 
-	imageProcessor := processors.NewImageProcessor(cfg.App.TempDir)
-	videoProcessor := processors.NewVideoProcessor(
-		cfg.App.TempDir,
-		cfg.App.FfmpegPath,
-		cfg.App.FfprobePath,
-	)
-	diskStorage := storage.NewDiskStorage()
+	for _, resolution := range resolutions {
+		wg.Add(1)
 
-	maestro := orchestrator.NewOrchestrator(
-		cfg,
-		jobSource,
-		imageProcessor,
-		videoProcessor,
-		diskStorage,
-	)
+		go func() {
+			defer wg.Done()
 
-	if err := maestro.Run(); err != nil {
-		log.Fatalf(err.Error())
+			fmt.Printf("transcoding input to resolution: %s\n", resolution.Name())
+
+			output := filepath.Join(outDir, fmt.Sprintf("%s.mp4", resolution.Name()))
+			err := transcoder.Transcode(inputFile, output, transcoder.TemplateFactory(resolution))
+			if err != nil {
+				log.Fatal(err.Error())
+			}
+
+			doneChan <- fmt.Sprintf("transcoded input to resolution: %s", resolution.Name())
+		}()
 	}
+
+	go func() {
+		wg.Wait()
+		close(doneChan)
+	}()
+
+	for msg := range doneChan {
+		fmt.Println(msg)
+	}
+
+	fmt.Println("done")
 }

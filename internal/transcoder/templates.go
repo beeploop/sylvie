@@ -1,0 +1,139 @@
+package transcoder
+
+type Resolution int
+
+const (
+	RES_1080p Resolution = iota
+	RES_720p
+	RES_480p
+	RES_360p
+	RES_240p
+	RES_144p
+)
+
+func (r Resolution) Name() string {
+	switch r {
+	case 0:
+		return "1080p"
+	case 1:
+		return "720p"
+	case 2:
+		return "480p"
+	case 3:
+		return "360p"
+	case 4:
+		return "240p"
+	case 5:
+		return "144p"
+	default:
+		return "unknown resolution"
+	}
+}
+
+type Template struct {
+	Width        int
+	Height       int
+	CRF          int
+	VideoBitRate string
+	AudioBitRate string
+	Preset       string
+	VideoCodec   string
+	AudioCodec   string
+}
+
+func TemplateFactory(resolution Resolution) Template {
+	switch resolution {
+	case RES_1080p:
+		return New1080pTemplate()
+	case RES_720p:
+		return New720pTemplate()
+	case RES_480p:
+		return New480pTemplate()
+	case RES_360p:
+		return New360pTemplate()
+	case RES_240p:
+		return New240pTemplate()
+	case RES_144p:
+		return New144pTemplate()
+	default:
+		return New720pTemplate()
+	}
+}
+
+func New1080pTemplate() Template {
+	return Template{
+		Width:        1920,
+		Height:       1080,
+		CRF:          20,
+		VideoBitRate: "5000k",
+		AudioBitRate: "192k",
+		Preset:       "slow",
+		VideoCodec:   "libx264",
+		AudioCodec:   "aac",
+	}
+}
+
+func New720pTemplate() Template {
+	return Template{
+		Width:        1280,
+		Height:       720,
+		CRF:          22,
+		VideoBitRate: "2500k",
+		AudioBitRate: "128k",
+		Preset:       "slow",
+		VideoCodec:   "libx264",
+		AudioCodec:   "aac",
+	}
+}
+
+func New480pTemplate() Template {
+	return Template{
+		Width:        854,
+		Height:       480,
+		CRF:          24,
+		VideoBitRate: "1000k",
+		AudioBitRate: "96k",
+		Preset:       "slow",
+		VideoCodec:   "libx264",
+		AudioCodec:   "aac",
+	}
+}
+
+func New360pTemplate() Template {
+	return Template{
+		Width:        640,
+		Height:       360,
+		CRF:          26,
+		VideoBitRate: "800k",
+		AudioBitRate: "64k",
+		Preset:       "slow",
+		VideoCodec:   "libx264",
+		AudioCodec:   "aac",
+	}
+}
+
+func New240pTemplate() Template {
+	return Template{
+		Width:        426,
+		Height:       240,
+		CRF:          28,
+		VideoBitRate: "500k",
+		AudioBitRate: "48k",
+		Preset:       "slow",
+		VideoCodec:   "libx264",
+		AudioCodec:   "aac",
+	}
+}
+
+func New144pTemplate() Template {
+	return Template{
+		Width:        256,
+		Height:       144,
+		CRF:          30,
+		VideoBitRate: "300k",
+		AudioBitRate: "48k",
+		Preset:       "slow",
+		VideoCodec:   "libx264",
+		AudioCodec:   "aac",
+	}
+}
