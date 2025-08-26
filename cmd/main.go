@@ -4,23 +4,23 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
+	"slices"
 	"sync"
 
 	"github.com/beeploop/sylvie/internal/transcoder"
+	"github.com/beeploop/sylvie/internal/utils"
 )
 
 func main() {
 	inputFile := "/home/screamour/Videos/unwrapped-beeploop.mp4"
 	outDir := "/home/screamour/repos/go/media-transcoding"
 
-	resolutions := []transcoder.Resolution{
-		transcoder.RES_1080p,
-		transcoder.RES_720p,
-		transcoder.RES_480p,
-		transcoder.RES_360p,
-		transcoder.RES_240p,
-		transcoder.RES_144p,
-	}
+	resolutions := slices.Collect(utils.Map(
+		[]string{"1080p", "720p", "480p", "360p", "240p", "144p"},
+		func(res string) transcoder.Resolution {
+			return transcoder.ResolutionFromName(res)
+		},
+	))
 
 	doneChan := make(chan string)
 	var wg sync.WaitGroup

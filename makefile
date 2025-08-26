@@ -6,6 +6,7 @@ run:
 
 clean:
 	@rm -rf bin
+	@rm *.mp4
 
 test:
 	@go test -v -failfast ./...

@@ -30,6 +30,25 @@ func (r Resolution) Name() string {
 	}
 }
 
+func ResolutionFromName(name string) Resolution {
+	switch name {
+	case "1080p":
+		return RES_1080p
+	case "720p":
+		return RES_720p
+	case "480p":
+		return RES_480p
+	case "360p":
+		return RES_360p
+	case "240p":
+		return RES_240p
+	case "144p":
+		return RES_144p
+	default:
+		return RES_720p
+	}
+}
+
 type Template struct {
 	Width        int
 	Height       int
