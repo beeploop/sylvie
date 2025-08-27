@@ -50,11 +50,12 @@ func ResolutionFromName(name string) Resolution {
 }
 
 type Template struct {
+	Resolution   Resolution
 	Width        int
 	Height       int
 	CRF          int
-	VideoBitRate string
-	AudioBitRate string
+	VideoBitRate int
+	AudioBitRate int
 	Preset       string
 	VideoCodec   string
 	AudioCodec   string
@@ -81,11 +82,12 @@ func TemplateFactory(resolution Resolution) Template {
 
 func New1080pTemplate() Template {
 	return Template{
+		Resolution:   RES_1080p,
 		Width:        1920,
 		Height:       1080,
 		CRF:          20,
-		VideoBitRate: "5000k",
-		AudioBitRate: "192k",
+		VideoBitRate: 5_000_000,
+		AudioBitRate: 192_000,
 		Preset:       "slow",
 		VideoCodec:   "libx264",
 		AudioCodec:   "aac",
@@ -94,11 +96,12 @@ func New1080pTemplate() Template {
 
 func New720pTemplate() Template {
 	return Template{
+		Resolution:   RES_720p,
 		Width:        1280,
 		Height:       720,
 		CRF:          22,
-		VideoBitRate: "2500k",
-		AudioBitRate: "128k",
+		VideoBitRate: 2_500_000,
+		AudioBitRate: 128_000,
 		Preset:       "slow",
 		VideoCodec:   "libx264",
 		AudioCodec:   "aac",
@@ -107,11 +110,12 @@ func New720pTemplate() Template {
 
 func New480pTemplate() Template {
 	return Template{
+		Resolution:   RES_480p,
 		Width:        854,
 		Height:       480,
 		CRF:          24,
-		VideoBitRate: "1000k",
-		AudioBitRate: "96k",
+		VideoBitRate: 1_000_000,
+		AudioBitRate: 96_000,
 		Preset:       "slow",
 		VideoCodec:   "libx264",
 		AudioCodec:   "aac",
@@ -120,11 +124,12 @@ func New480pTemplate() Template {
 
 func New360pTemplate() Template {
 	return Template{
+		Resolution:   RES_360p,
 		Width:        640,
 		Height:       360,
 		CRF:          26,
-		VideoBitRate: "800k",
-		AudioBitRate: "64k",
+		VideoBitRate: 800_000,
+		AudioBitRate: 64_000,
 		Preset:       "slow",
 		VideoCodec:   "libx264",
 		AudioCodec:   "aac",
@@ -133,11 +138,12 @@ func New360pTemplate() Template {
 
 func New240pTemplate() Template {
 	return Template{
+		Resolution:   RES_240p,
 		Width:        426,
 		Height:       240,
 		CRF:          28,
-		VideoBitRate: "500k",
-		AudioBitRate: "48k",
+		VideoBitRate: 500_000,
+		AudioBitRate: 48_000,
 		Preset:       "slow",
 		VideoCodec:   "libx264",
 		AudioCodec:   "aac",
@@ -146,11 +152,12 @@ func New240pTemplate() Template {
 
 func New144pTemplate() Template {
 	return Template{
+		Resolution:   RES_144p,
 		Width:        256,
 		Height:       144,
 		CRF:          30,
-		VideoBitRate: "300k",
-		AudioBitRate: "48k",
+		VideoBitRate: 300_000,
+		AudioBitRate: 48_000,
 		Preset:       "slow",
 		VideoCodec:   "libx264",
 		AudioCodec:   "aac",

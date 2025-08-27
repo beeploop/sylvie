@@ -1,19 +1,24 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
-	"path/filepath"
+	"os"
 	"slices"
-	"sync"
 
 	"github.com/beeploop/sylvie/internal/transcoder"
 	"github.com/beeploop/sylvie/internal/utils"
+	"github.com/google/uuid"
 )
 
 func main() {
 	inputFile := "/home/screamour/Videos/unwrapped-beeploop.mp4"
-	outDir := "/home/screamour/repos/go/media-transcoding"
+	outDir := "/home/screamour/repos/go/media-transcoding/results"
+
+	if err := os.MkdirAll(outDir, 0777); err != nil {
+		log.Fatal(err.Error())
+	}
 
 	resolutions := slices.Collect(utils.Map(
 		[]string{"1080p", "720p", "480p", "360p", "240p", "144p"},
@@ -22,35 +27,22 @@ func main() {
 		},
 	))
 
-	doneChan := make(chan string)
-	var wg sync.WaitGroup
-
-	for _, resolution := range resolutions {
-		wg.Add(1)
-
-		go func() {
-			defer wg.Done()
-
-			fmt.Printf("transcoding input to resolution: %s\n", resolution.Name())
-
-			output := filepath.Join(outDir, fmt.Sprintf("%s.mp4", resolution.Name()))
-			err := transcoder.Transcode(inputFile, output, transcoder.TemplateFactory(resolution))
-			if err != nil {
-				log.Fatal(err.Error())
-			}
-
-			doneChan <- fmt.Sprintf("transcoded input to resolution: %s", resolution.Name())
-		}()
+	params := &transcoder.TranscodeInput{
+		VideoID:     uuid.NewString(),
+		InFile:      inputFile,
+		OutDir:      outDir,
+		Resolutions: resolutions,
 	}
 
-	go func() {
-		wg.Wait()
-		close(doneChan)
-	}()
-
-	for msg := range doneChan {
-		fmt.Println(msg)
+	metadata, err := transcoder.Transcode(params)
+	if err != nil {
+		log.Fatal(err.Error())
 	}
 
-	fmt.Println("done")
+	b, err := json.MarshalIndent(metadata, "", "  ")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	fmt.Println(string(b))
 }
