@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/beeploop/sylvie/internal/config"
 	"github.com/beeploop/sylvie/internal/metadata"
 	"github.com/beeploop/sylvie/internal/utils"
 	"github.com/google/uuid"
@@ -17,8 +18,8 @@ import (
 type TranscodeInput struct {
 	VideoID     string
 	InFile      string
-	OutDir      string
 	Resolutions []Resolution
+	Config      *config.Config
 }
 
 func Transcode(params *TranscodeInput) (metadata.Metadata, error) {
@@ -30,7 +31,7 @@ func Transcode(params *TranscodeInput) (metadata.Metadata, error) {
 		Thumbnails: make([]metadata.Thumbnail, 0),
 	}
 
-	dest := filepath.Join(params.OutDir, uuid.NewString())
+	dest := filepath.Join(params.Config.OutDir, uuid.NewString())
 	if err := os.MkdirAll(dest, 0777); err != nil {
 		return meta, err
 	}

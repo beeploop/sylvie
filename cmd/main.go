@@ -2,24 +2,24 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
-	"os"
 	"slices"
 
+	"github.com/beeploop/sylvie/internal/config"
 	"github.com/beeploop/sylvie/internal/transcoder"
 	"github.com/beeploop/sylvie/internal/utils"
 	"github.com/google/uuid"
 )
 
 func main() {
+	configFile := flag.String("config", "", "Specify the yaml configuration file")
+	flag.Parse()
+
+	cfg := config.Init(configFile)
+
 	inputFile := "/home/screamour/Videos/unwrapped-beeploop.mp4"
-	outDir := "/home/screamour/repos/go/media-transcoding/results"
-
-	if err := os.MkdirAll(outDir, 0777); err != nil {
-		log.Fatal(err.Error())
-	}
-
 	resolutions := slices.Collect(utils.Map(
 		[]string{"1080p", "720p", "480p", "360p", "240p", "144p"},
 		func(res string) transcoder.Resolution {
@@ -30,8 +30,8 @@ func main() {
 	params := &transcoder.TranscodeInput{
 		VideoID:     uuid.NewString(),
 		InFile:      inputFile,
-		OutDir:      outDir,
 		Resolutions: resolutions,
+		Config:      cfg,
 	}
 
 	metadata, err := transcoder.Transcode(params)
