@@ -29,6 +29,8 @@ func main() {
 
 	go func() {
 		for d := range rabbit.Msgs {
+			log.Printf("received a new msg\n")
+
 			var msg rabbitmq.Message
 			if err := json.Unmarshal(d.Body, &msg); err != nil {
 				log.Printf("Error reading msg body: %s\n", err.Error())
