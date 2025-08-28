@@ -21,18 +21,17 @@ This is the first part of the project and the goals of this is to subscribe to a
 ## Configuration File
 The tool automatically looks for a `sylvieconfig.yaml` file in the root of the directory.
 
-```bash
+### Example config
+```yaml
 out_dir: ./path/to/desired/directory
 ```
 
 ### Running with default config filename
-
 ```bash
 sylvie
 ```
 
-## Specifying a configuration file
-
+### Specifying a configuration file
 ```bash
 sylvie --config {your-config-file.yaml}
 ```
