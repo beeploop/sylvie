@@ -13,7 +13,9 @@ const (
 )
 
 type Config struct {
-	OutDir string `yaml:"out_dir"`
+	OutDir                 string `yaml:"out_dir"`
+	RabbitConnectionString string `yaml:"rabbit_connection_string"`
+	QueueName              string `yaml:"queue_name"`
 }
 
 func Init(configFile *string) *Config {
