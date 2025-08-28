@@ -10,7 +10,7 @@ This is the first part of the project and the goals of this is to subscribe to a
 ## What's Next?
 
 - [ ] Generate Sprite sheet or WebVTT output for hover previous on video track
-- [ ] Generate HLS Playlist to support adaptive streaming
+- [x] Generate HLS Playlist to support adaptive streaming
 - [ ] Read app configuration from a config file (sylvieconfig)
 - [ ] Generate sprite_sheet/tile for the hover previous
 - [ ] Dockerize the program for easier setup
