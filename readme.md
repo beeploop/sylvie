@@ -1,6 +1,5 @@
 ## Sylvie
-
-A minimal video transcoding and thumbnail generation program utilizing the `ffmpeg` capabilities.
+A minimal video transcoding and thumbnail generation program utilizing the `ffmpeg` capabilities. The program subscribe to a [RabbitMQ](https://www.rabbitmq.com) Queue for jobs. See the [message](#rabbitmq-message) section for the message structure.
 
 ## Motivation
 This is a part of the whole learning process of creating a [Video-on-Demand](https://en.wikipedia.org/wiki/Video_on_demand) system similar what YouTube does.
@@ -11,12 +10,12 @@ This is the first part of the project and the goals of this is to subscribe to a
 
 - [ ] Generate Sprite sheet or WebVTT output for hover previous on video track
 - [x] Generate HLS Playlist to support adaptive streaming
-- [ ] Read app configuration from a config file (sylvieconfig)
-- [ ] Generate sprite_sheet/tile for the hover previous
+- [x] Read app configuration from a config file (sylvieconfig)
 - [ ] Dockerize the program for easier setup
 
 ## Requirements
 - `ffmpeg`
+- `RabbitMQ`
 
 ## Configuration File
 The tool automatically looks for a `sylvieconfig.yaml` file in the root of the directory.
@@ -24,6 +23,8 @@ The tool automatically looks for a `sylvieconfig.yaml` file in the root of the d
 ### Example config
 ```yaml
 out_dir: ./path/to/desired/directory
+rabbit_connection_string: "amqp://guest:guest@localhost:5672"
+queue_name: "sylvie_jobs"
 ```
 
 ### Running with default config filename
@@ -35,3 +36,18 @@ sylvie
 ```bash
 sylvie --config {your-config-file.yaml}
 ```
+
+## RabbitMQ Message
+Sylvie subscribe to a RabbitMQ Queue for transcoding jobs. The job is in JSON format and structure looks like this:
+
+```json
+{
+    "video_id": "af57f595-e548-421b-9410-7f50f719c7b3",
+    "path": "/path/to/the/video/file",
+    "resolutions": ["1080p", "720p", "480p"]
+}
+```
+
+- `video_id` - Unique ID of the client-uploaded video. This comes from the uploading service.
+- `path` - A sylvie-accessible path to the video file to be transcoded.
+- `resolutions` - List of resolutions to transcode to. Accepted values are: "1080p", "720p", "480p", "360p", "240p", "144p".
