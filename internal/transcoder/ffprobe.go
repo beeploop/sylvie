@@ -104,7 +104,7 @@ func (r FfprobeResult) toSourceMetadata() (metadata.SourceMetadata, error) {
 	}, nil
 }
 
-func extractDataWithFfprobe(input string) (FfprobeResult, error) {
+func extractMetadataWithFfprobe(input string) (FfprobeResult, error) {
 	cmd := exec.Command(
 		"ffprobe",
 		"-v",

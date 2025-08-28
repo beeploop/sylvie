@@ -1,18 +1,19 @@
 package transcoder
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/beeploop/sylvie/internal/config"
 	"github.com/beeploop/sylvie/internal/metadata"
 	"github.com/beeploop/sylvie/internal/utils"
-	"github.com/google/uuid"
 )
 
 type TranscodeInput struct {
@@ -31,12 +32,12 @@ func Transcode(params *TranscodeInput) (metadata.Metadata, error) {
 		Thumbnails: make([]metadata.Thumbnail, 0),
 	}
 
-	dest := filepath.Join(params.Config.OutDir, uuid.NewString())
+	dest := filepath.Join(params.Config.OutDir, meta.VideoID)
 	if err := os.MkdirAll(dest, 0777); err != nil {
 		return meta, err
 	}
 
-	result, err := extractDataWithFfprobe(params.InFile)
+	result, err := extractMetadataWithFfprobe(params.InFile)
 	if err != nil {
 		return meta, err
 	}
@@ -53,14 +54,32 @@ func Transcode(params *TranscodeInput) (metadata.Metadata, error) {
 		go func() {
 			defer wg.Done()
 
-			template := TemplateFactory(resolution)
-			output := filepath.Join(dest, fmt.Sprintf("%s.mp4", resolution.Name()))
+			outDir := filepath.Join(dest, resolution.Name())
+			if err := os.MkdirAll(outDir, 0777); err != nil {
+				log.Printf("Failed to create a directory for %s, rendetion: Error: %s\n", resolution.Name(), err.Error())
+				return
+			}
 
-			rendetion, err := createRendetion(params.InFile, output, sourceMetadata, template)
+			template := TemplateFactory(resolution)
+			rendetionOutFile := filepath.Join(outDir, fmt.Sprintf("%s.mp4", resolution.Name()))
+
+			rendetion, err := createRendetion(
+				params.InFile,
+				rendetionOutFile,
+				sourceMetadata,
+				template)
 			if err != nil {
 				log.Printf("Failed creating %s rendetion. Error: %s\n", resolution.Name(), err.Error())
 				return
 			}
+
+			hlsOutDir := filepath.Dir(rendetion.Outputs.MP4.Path)
+			hlsRendetion, err := createHLS(rendetion.Outputs.MP4.Path, hlsOutDir, resolution)
+			if err != nil {
+				log.Printf("Failed creating HLS for %s rendetion. Error: %s\n", resolution.Name(), err.Error())
+			}
+
+			rendetion.Outputs.HLS = hlsRendetion
 			meta.Rendetions = append(meta.Rendetions, rendetion)
 		}()
 	}
@@ -70,8 +89,8 @@ func Transcode(params *TranscodeInput) (metadata.Metadata, error) {
 		defer wg.Done()
 
 		seektime := 5
-		output := filepath.Join(dest, "thumbnail_default.jpg")
-		thumbnail, err := createThumbnail(params.InFile, output, seektime)
+		thumbnailOutFile := filepath.Join(dest, "thumbnail_default.jpg")
+		thumbnail, err := createThumbnail(params.InFile, thumbnailOutFile, seektime)
 		if err != nil {
 			log.Printf("Failed to create thumbnail: %s\n", err.Error())
 			return
@@ -80,6 +99,14 @@ func Transcode(params *TranscodeInput) (metadata.Metadata, error) {
 	}()
 
 	wg.Wait()
+
+	masterPlaylistOutFile := filepath.Join(dest, "master.m3u8")
+	masterPlaylist, err := createHLSMasterPlaylist(masterPlaylistOutFile, meta.Rendetions)
+	if err != nil {
+		return meta, err
+	}
+	meta.Streaming = masterPlaylist
+
 	return meta, nil
 }
 
@@ -123,7 +150,11 @@ func createRendetion(src, dest string, meta metadata.SourceMetadata, template Te
 		Bitrate:    template.VideoBitRate,
 		Codec:      template.VideoCodec,
 		FileSize:   int(info.Size()),
-		Path:       dest,
+		Outputs: metadata.RendetionOutputs{
+			MP4: metadata.MP4RendetionPath{
+				Path: dest,
+			},
+		},
 	}
 	return rendetion, nil
 }
@@ -158,4 +189,106 @@ func createThumbnail(src, dest string, seektimeInSeconds int) (metadata.Thumbnai
 		Type:      "default",
 		Path:      dest,
 	}, nil
+}
+
+func createHLSMasterPlaylist(outFile string, rendetions []metadata.Rendetion) (metadata.Streaming, error) {
+	f, err := os.Create(outFile)
+	if err != nil {
+		return metadata.Streaming{}, err
+	}
+	defer f.Close()
+
+	if _, err := f.WriteString("#EXTM3U\n"); err != nil {
+		return metadata.Streaming{}, err
+	}
+	if _, err := f.WriteString("#EXT-X-VERSION:3\n"); err != nil {
+		return metadata.Streaming{}, err
+	}
+
+	for _, rendetion := range rendetions {
+		resolution := fmt.Sprintf("%dx%d", rendetion.Width, rendetion.Height)
+		variant := fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%s\n", rendetion.Bitrate, resolution)
+		if _, err := f.WriteString(variant); err != nil {
+			return metadata.Streaming{}, err
+		}
+
+		baseDir := filepath.Dir(outFile)
+		path := strings.TrimPrefix(rendetion.Outputs.HLS.Playlist, baseDir)
+		cleanPath := strings.TrimPrefix(path, "/")
+		if _, err := f.WriteString(fmt.Sprintf("%s\n\n", cleanPath)); err != nil {
+			return metadata.Streaming{}, err
+		}
+	}
+
+	master := metadata.Streaming{
+		MasterPlaylist: outFile,
+		Protocol:       "hls",
+	}
+
+	return master, nil
+}
+
+func createHLS(src, dest string, resolution Resolution) (metadata.HLSRendetionPath, error) {
+	filename := fmt.Sprintf("%s.m3u8", resolution.Name())
+	outFile := filepath.Join(dest, filename)
+
+	cmd := exec.Command(
+		"ffmpeg",
+		"-y",
+		"-i",
+		src,
+		"-profile:v",
+		"baseline",
+		"-level",
+		"3.0",
+		"-start_number",
+		"0",
+		"-hls_time",
+		"10",
+		"-hls_list_size",
+		"0",
+		"-f",
+		"hls",
+		outFile,
+	)
+
+	if err := cmd.Run(); err != nil {
+		return metadata.HLSRendetionPath{}, err
+	}
+
+	segments, err := extractSegments(outFile)
+	if err != nil {
+		return metadata.HLSRendetionPath{}, err
+	}
+
+	hls := metadata.HLSRendetionPath{
+		Playlist: outFile,
+		Segments: segments,
+	}
+
+	return hls, nil
+}
+
+func extractSegments(m3u8Path string) ([]string, error) {
+	f, err := os.Open(m3u8Path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	baseDir := filepath.Dir(m3u8Path)
+
+	var segments []string
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		segments = append(segments, filepath.Join(baseDir, line))
+	}
+
+	return segments, nil
 }
