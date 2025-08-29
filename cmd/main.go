@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -12,6 +10,7 @@ import (
 
 	"github.com/beeploop/sylvie/internal/config"
 	"github.com/beeploop/sylvie/internal/rabbitmq"
+	"github.com/beeploop/sylvie/internal/repository"
 	"github.com/beeploop/sylvie/internal/transcoder"
 	"github.com/beeploop/sylvie/internal/utils"
 )
