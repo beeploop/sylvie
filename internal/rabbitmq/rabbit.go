@@ -8,9 +8,9 @@ import (
 )
 
 type RabbitMQ struct {
-	conn *amqp.Connection
-	ch   *amqp.Channel
-	Msgs <-chan amqp.Delivery
+	conn          *amqp.Connection
+	consumerChan  *amqp.Channel
+	publisherChan *amqp.Channel
 }
 
 func Init(cfg *config.Config) *RabbitMQ {
@@ -22,25 +22,37 @@ func Init(cfg *config.Config) *RabbitMQ {
 	}
 	rabbit.conn = conn
 
-	ch, err := conn.Channel()
+	// Channel for consumer
+	consumerChan, err := conn.Channel()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	rabbit.ch = ch
+	rabbit.consumerChan = consumerChan
 
-	if _, err := ch.QueueDeclare(
-		cfg.QueueName,
+	// Channel for publisher
+	publisherChan, err := conn.Channel()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	rabbit.publisherChan = publisherChan
+
+	return rabbit
+}
+
+func (r *RabbitMQ) ConnectToTranscodingQueue(queueName string) (<-chan amqp.Delivery, error) {
+	if _, err := r.consumerChan.QueueDeclare(
+		queueName,
 		true,
 		false,
 		false,
 		false,
 		nil,
 	); err != nil {
-		log.Fatal(err.Error())
+		return nil, err
 	}
 
-	msgs, err := ch.Consume(
-		cfg.QueueName,
+	msgs, err := r.consumerChan.Consume(
+		queueName,
 		"",
 		false,
 		false,
@@ -49,14 +61,42 @@ func Init(cfg *config.Config) *RabbitMQ {
 		nil,
 	)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
 	}
-	rabbit.Msgs = msgs
 
-	return rabbit
+	return msgs, nil
+}
+
+func (r *RabbitMQ) ConnectToPublishQueue(queueName string) error {
+	if _, err := r.publisherChan.QueueDeclare(
+		queueName,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *RabbitMQ) Publish(queueName string, data []byte) error {
+	return r.publisherChan.Publish(
+		"",
+		queueName,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "application/json",
+			Body:        data,
+		},
+	)
 }
 
 func (r *RabbitMQ) Close() {
-	r.ch.Close()
+	r.consumerChan.Close()
+	r.publisherChan.Close()
 	r.conn.Close()
 }
