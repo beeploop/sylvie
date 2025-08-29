@@ -1,0 +1,4 @@
+out_dir: ./outputs
+rabbit_connection_string: "amqp://guest:guest@localhost:5672"
+transcoding_queue_name: "transcoding_jobs_queue"
+publishing_queue_name: "transcoding_output_queue"
