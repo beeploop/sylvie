@@ -1,6 +1,9 @@
 ## Sylvie
 A minimal video transcoding and thumbnail generation program utilizing the `ffmpeg` capabilities. The program subscribe to a [RabbitMQ](https://www.rabbitmq.com) Queue for jobs. See the [message](#rabbitmq-message) section for the message structure.
 
+## Why the name?
+`Sylvie` is a reference to the Marvel Cinematic Universe Loki variant of the same name. Though she did not cause the multiverse, killing He Who Remains lead to branching of the Sacred Timeline into parallel universes. Creation of multiple versions of an uploaded media file is a recall to the creation of parallel universes and multiple variants of characters.
+
 ## Motivation
 This is a part of the whole learning process of creating a [Video-on-Demand](https://en.wikipedia.org/wiki/Video_on_demand) system similar what YouTube does.
 
