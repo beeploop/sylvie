@@ -1,13 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
-	"fmt"
 	"log"
 	"slices"
 
 	"github.com/beeploop/sylvie/internal/config"
+	"github.com/beeploop/sylvie/internal/repository"
 	"github.com/beeploop/sylvie/internal/transcoder"
 	"github.com/beeploop/sylvie/internal/utils"
 	"github.com/google/uuid"
@@ -39,10 +38,8 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	b, err := json.MarshalIndent(metadata, "", "  ")
-	if err != nil {
+	repo := repository.NewDiskRepository(cfg.OutDir)
+	if err := repo.Save(metadata); err != nil {
 		log.Fatal(err.Error())
 	}
-
-	fmt.Println(string(b))
 }
