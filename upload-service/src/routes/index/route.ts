@@ -1,7 +1,6 @@
 import { Request, Response, Router } from "express";
+import { IndexController } from "../../controllers/index/controller";
 
 export const indexRouter = Router();
 
-indexRouter.get("/", (req: Request, res: Response) => {
-    res.status(200).json({ hello: "world" });
-});
+indexRouter.get("/", IndexController());
