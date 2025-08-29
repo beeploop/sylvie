@@ -7,7 +7,7 @@ A minimal video transcoding and thumbnail generation program utilizing the `ffmp
 ## Motivation
 This is a part of the whole learning process of creating a [Video-on-Demand](https://en.wikipedia.org/wiki/Video_on_demand) system similar what YouTube does.
 
-This is the first part of the project and the goals of this is to subscribe to a message queue for uploaded videos and perform transcoding and thumbnail generation on it.
+This is the first part of a bigger project and the goals of this is to subscribe to a message queue for uploaded videos and perform transcoding and thumbnail generation on it.
 
 ## What's Next?
 
