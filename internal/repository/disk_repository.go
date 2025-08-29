@@ -5,19 +5,22 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/beeploop/sylvie/internal/metadata"
 )
 
 type DiskRepository struct {
-	outDir   string
-	filename string
+	outDir string
 }
 
 func NewDiskRepository(outDir string) *DiskRepository {
+	if err := os.MkdirAll(outDir, 0777); err != nil {
+		log.Fatal(err.Error())
+	}
+
 	return &DiskRepository{
-		outDir:   outDir,
-		filename: "result.json",
+		outDir: outDir,
 	}
 }
 
@@ -27,7 +30,8 @@ func (r *DiskRepository) Save(data metadata.Metadata) error {
 		return err
 	}
 
-	f, err := os.Create(r.filename)
+	filename := fmt.Sprintf("%s.json", data.VideoID)
+	f, err := os.Create(filepath.Join(r.outDir, filename))
 	if err != nil {
 		return err
 	}

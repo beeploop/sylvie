@@ -1,10 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"slices"
 	"syscall"
 
@@ -21,6 +24,7 @@ func main() {
 
 	cfg := config.Init(configFile)
 
+	repo := repository.NewDiskRepository(filepath.Join(cfg.OutDir, "results"))
 	rabbit := rabbitmq.Init(cfg)
 
 	quitChan := make(chan os.Signal, 1)
@@ -33,7 +37,7 @@ func main() {
 			var msg rabbitmq.Message
 			if err := json.Unmarshal(d.Body, &msg); err != nil {
 				log.Printf("Error reading msg body: %s\n", err.Error())
-				return
+				continue
 			}
 
 			params := &transcoder.TranscodeInput{
@@ -45,20 +49,19 @@ func main() {
 						return transcoder.ResolutionFromName(resolution)
 					},
 				)),
-				Config: cfg,
+				OutDir: filepath.Join(cfg.OutDir, "encoded"),
 			}
 
 			metadata, err := transcoder.Transcode(params)
 			if err != nil {
-				log.Fatal(err.Error())
+				log.Printf("Failed to transcode. Error: %s\n", err.Error())
+				continue
 			}
 
-			b, err := json.MarshalIndent(metadata, "", "  ")
-			if err != nil {
-				log.Fatal(err.Error())
+			if err := repo.Save(metadata); err != nil {
+				log.Printf("Failed to save encoding result. Error: %s\n", err.Error())
+				continue
 			}
-
-			fmt.Println(string(b))
 
 			d.Ack(false)
 		}
@@ -67,6 +70,7 @@ func main() {
 	fmt.Printf("Consuming messages... Press CTRL + C to stop\n")
 	<-quitChan
 
-	fmt.Printf("Shutting down gracefully...")
+	fmt.Printf("Shutting down gracefully...\n")
 	rabbit.Close()
+	close(quitChan)
 }

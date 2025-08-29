@@ -8,6 +8,7 @@ clean:
 	@rm -rf bin
 	@rm -f *.mp4
 	@rm -rf results
+	@rm -rf outputs
 
 test:
 	@go test -v -failfast ./...
