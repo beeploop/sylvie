@@ -12,7 +12,7 @@ This project is a learning adventure to microservice architecture and video stre
 ## What's Next?
 This checklist is a living document and may evolve over time as the projet progresses and requirements become clearer.
 
-- [ ] Implement a video upload service.
+- [x] Implement a video upload service.
 - [ ] Implment auth service to track.
 - [ ] Implement search service.
 - [ ] Implement playback service.
