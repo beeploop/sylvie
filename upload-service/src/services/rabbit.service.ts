@@ -5,7 +5,7 @@ export type Job = {
     video_id: string;
     path: string;
     resolutions: string[];
-}
+};
 
 export type RabbitStatus = "closed" | "initialized";
 
@@ -31,7 +31,10 @@ export class RabbitMQ {
     }
 
     async publish(job: Job): Promise<void> {
-        this.channel.sendToQueue(this.queueName, Buffer.from(JSON.stringify(job)));
+        this.channel.sendToQueue(
+            this.queueName,
+            Buffer.from(JSON.stringify(job)),
+        );
         console.log(`Published: ${job}`);
     }
 

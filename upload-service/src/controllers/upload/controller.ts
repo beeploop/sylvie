@@ -17,10 +17,10 @@ export function UploadController(rabbit: RabbitMQ) {
             video_id: file.filename.split(".")[0],
             path: file.path,
             resolutions: ["1080p", "720p", "480p", "360p", "240p", "144p"],
-        }
+        };
 
-        rabbit.publish(job).catch(err => console.log(err));
+        rabbit.publish(job).catch((err) => console.log(err));
 
         res.status(200).json({ message: "upload success" });
-    }
+    };
 }
