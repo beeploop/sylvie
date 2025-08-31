@@ -64,7 +64,7 @@ func createHLSSegments(src, dest string, resolution Resolution) (metadata.HLSRen
 		"-start_number",
 		"0",
 		"-hls_time",
-		"10",
+		"5",
 		"-hls_list_size",
 		"0",
 		"-f",
