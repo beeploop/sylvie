@@ -15,7 +15,7 @@ This checklist is a living document and may evolve over time as the projet progr
 - [x] Implement a video upload service.
 - [ ] Implment auth service to track.
 - [ ] Implement search service.
-- [ ] Implement playback service.
+- [x] Implement playback service.
 - [ ] Implement a frontend to consume all these services.
 - [ ] Generate Sprite sheet or WebVTT output for hover previous on video track
 - [x] Generate HLS Playlist to support adaptive streaming
