@@ -21,15 +21,17 @@ The tool automatically looks for a `sylvieconfig.yaml` file in the root of the d
 
 ### Example config
 ```yaml
-out_dir: ./path/to/desired/directory
+out_dir: ./path/to/resource/plus/own/directory
 rabbit_connection_string: "amqp://guest:guest@localhost:5672"
 transcoding_queue_name: "transcoding_jobs_queue"
 publishing_queue_name: "transcoding_output_queue"
 ```
- - `out_dir` : directory where the transcoded media and result metadata is saved.
+ - `out_dir` : directory in the `shared directory` where to store the transcoding results.
  - `rabbit_connection_string` : connection string to RabbitMQ.
  - `transcoding_queue_name` : queue name in RabbitMQ where sylvie will pull jobs from.
  - `publishing_queue_name` : queue name in RabbitMQ where sylvie will publish output to when done.
+
+For more details about `shared directory`, [read here](../readme.md#shared-directory).
 
 ### Running with default config filename
 ```bash
