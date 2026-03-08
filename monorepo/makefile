@@ -9,9 +9,10 @@ run-worker:
 	@go run ./cmd/worker/main.go
 
 test:
-	@go test -v -failfast ./...
+	@go test -v -cover -failfast ./...
 
 clean:
 	@rm -rf bin
+	@find -type d -name "tmp" -exec rm -rf {} +
 
 .PHONY: test clean run-api run-worker
