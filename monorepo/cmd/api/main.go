@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sylvie/internal/config"
 	"syscall"
 	"time"
 )
@@ -17,12 +18,12 @@ func main() {
 	mux.HandleFunc("GET /", handleIndex)
 
 	server := &http.Server{
-		Addr:    ":3000",
+		Addr:    config.Load().PORT,
 		Handler: mux,
 	}
 
 	go func() {
-		log.Println("api server listening in port: 3000")
+		log.Printf("api server listening in port: %s\n", config.Load().PORT)
 		if err := server.ListenAndServe(); err != nil {
 			log.Fatalf("failed to run api server: %s\n", err)
 		}
