@@ -13,6 +13,7 @@ type Server struct {
 
 type RabbitMQ struct {
 	ConnectionString string
+	QueueName        string
 }
 
 type Config struct {

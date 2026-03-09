@@ -4,6 +4,7 @@ go 1.25.6
 
 require (
 	github.com/joho/godotenv v1.5.1
+	github.com/streadway/amqp v1.1.0
 	github.com/stretchr/testify v1.11.1
 )
 
