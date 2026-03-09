@@ -21,25 +21,29 @@ func main() {
 
 	consumer := queue.NewConsumer(ch, config.Load().QueueName)
 
+	errChan := make(chan error, 1)
 	go func() {
 		log.Println("starting rabbitmq consumer")
 		if err := consumer.Consume(messageHandler); err != nil {
-			log.Fatalf("failed to read message from rabbitmq: %s\n", err)
+			errChan <- err
 		}
 	}()
 
 	quitChan := make(chan os.Signal, 1)
 	signal.Notify(quitChan, syscall.SIGTERM, syscall.SIGINT)
-	<-quitChan
+
+	select {
+	case sig := <-quitChan:
+		log.Printf("received a shutdown signal: %s\n", sig)
+
+	case err := <-errChan:
+		log.Printf("worker encountered an error: %s\n", err)
+	}
 
 	log.Println("gracefully shutting down worker...")
-	if err := ch.Close(); err != nil {
-		log.Fatalf("error closing rabbitmq channel: %s\n", err)
-	}
 
-	if err := conn.Close(); err != nil {
-		log.Fatalf("error closing rabbitmq connection: %s\n", err)
-	}
+	ch.Close()
+	conn.Close()
 
 	log.Println("worker exited")
 }
