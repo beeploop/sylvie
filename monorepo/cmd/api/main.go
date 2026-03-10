@@ -2,24 +2,26 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"sylvie/internal/application"
 	"sylvie/internal/config"
+	"sylvie/internal/router"
 	"syscall"
-	"time"
+
+	"github.com/labstack/echo/v5"
 )
 
 func main() {
-	mux := http.NewServeMux()
+	app := application.Bootstrap()
 
-	mux.HandleFunc("GET /", handleIndex)
+	r := echo.New()
 
 	server := &http.Server{
 		Addr:    config.Load().PORT,
-		Handler: mux,
+		Handler: router.RegisterRoutes(r, app),
 	}
 
 	errChan := make(chan error, 1)
@@ -41,6 +43,16 @@ func main() {
 		log.Printf("server encountered an error: %s\n", err)
 	}
 
+	log.Println("gracefully shutting down rabbitmq...")
+
+	if err := app.RabbitChannel.Close(); err != nil {
+		log.Fatalf("faild to close rabbitmq channel: %s\n", err)
+	}
+
+	if err := app.RabbitConnection.Close(); err != nil {
+		log.Fatalf("faild to close rabbitmq connection: %s\n", err)
+	}
+
 	log.Println("gracefully shutting down api server...")
 
 	if err := server.Shutdown(context.Background()); err != nil {
@@ -48,23 +60,4 @@ func main() {
 	}
 
 	log.Println("server exited")
-}
-
-func handleIndex(w http.ResponseWriter, r *http.Request) {
-	data := struct {
-		Message string `json:"message"`
-		Time    string `json:"time"`
-	}{
-		Message: "hello world",
-		Time:    time.Now().Format(time.RFC3339),
-	}
-
-	b, err := json.Marshal(data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Add("Content-Type", "application/json")
-	w.Write(b)
 }
