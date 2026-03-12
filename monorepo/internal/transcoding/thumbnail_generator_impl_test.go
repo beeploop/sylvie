@@ -42,7 +42,7 @@ func TestThumbnailGenerator(t *testing.T) {
 
 			t.Run(tc.Name, func(t *testing.T) {
 				outDir := generator.outputDirectory(tc.Input.VideoID)
-				cmd := generator.buildCommand(tc.Input.VideoID, tc.Input.Filepath, outDir)
+				cmd := generator.buildCommand(tc.Input.Filepath, outDir)
 				assert.EqualValues(t, tc.ExpectedCmd, cmd.Args)
 			})
 		}
