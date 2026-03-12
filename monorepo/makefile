@@ -14,5 +14,6 @@ test:
 clean:
 	@rm -rf bin
 	@find -type d -name "tmp" -exec rm -rf {} +
+	@find -type d -name "transcoder_test_input" -exec rm -rf {} +
 
 .PHONY: test clean run-api run-worker
