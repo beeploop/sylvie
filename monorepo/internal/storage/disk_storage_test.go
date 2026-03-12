@@ -37,7 +37,7 @@ func TestDiskStorage(t *testing.T) {
 		}
 
 		s := NewDiskStorage(DiskStorageConfig{
-			BaseDir:    "./tmp",
+			BaseDir:    t.TempDir(),
 			Permission: os.FileMode(0777),
 		})
 
