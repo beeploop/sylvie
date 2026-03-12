@@ -1,4 +1,4 @@
-package transcoder
+package transcoding
 
 import (
 	"errors"
@@ -65,11 +65,11 @@ func TestTranscoder(t *testing.T) {
 			t.Fatalf("cannot read current working directory: %s\n", err)
 		}
 
-		outDirInfo, err := os.Stat(filepath.Join(wd, testInputDir))
+		inputDirInfo, err := os.Stat(filepath.Join(wd, testInputDir))
 		if errors.Is(err, os.ErrNotExist) {
 			t.Fatalf("%s does not exists", testInputDir)
 		}
-		if err == nil && !outDirInfo.IsDir() {
+		if err == nil && !inputDirInfo.IsDir() {
 			t.Fatalf("%s is not a directory", testInputDir)
 		}
 

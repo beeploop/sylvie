@@ -1,4 +1,4 @@
-package transcoder
+package transcoding
 
 type Rendetion struct {
 	VideoID    string
