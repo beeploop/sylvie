@@ -86,7 +86,20 @@ func ResolutionFromName(name string) Resolution {
 	case "360p":
 		return RES_360p
 	default:
+		return RES_360p
+	}
+}
+
+func ResolutionFromDimension(dimension string) Resolution {
+	switch dimension {
+	case "1920x1080":
+		return RES_1080p
+	case "1280x720":
 		return RES_720p
+	case "640x360":
+		return RES_360p
+	default:
+		return RES_360p
 	}
 }
 
