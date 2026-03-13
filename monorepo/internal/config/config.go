@@ -13,12 +13,17 @@ type Server struct {
 
 type RabbitMQ struct {
 	ConnectionString string
-	QueueName        string
+	Name             string
+}
+
+type Storage struct {
+	BaseDir string
 }
 
 type Config struct {
-	Server
-	RabbitMQ
+	Server  Server
+	Queue   RabbitMQ
+	Storage Storage
 }
 
 func Load() *Config {
@@ -30,8 +35,11 @@ func Load() *Config {
 		Server: Server{
 			PORT: mustLoadEnv("PORT", ":3000"),
 		},
-		RabbitMQ: RabbitMQ{
+		Queue: RabbitMQ{
 			ConnectionString: mustLoadEnv("RABBIT_CONNECTION_STR", "amqp://guest:guest@localhost:5672"),
+		},
+		Storage: Storage{
+			BaseDir: mustLoadEnv("STORAGE_DIR", "tmp"),
 		},
 	}
 }

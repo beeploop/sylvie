@@ -25,16 +25,20 @@ func NewDiskStorage(config DiskStorageConfig) *diskStorage {
 	}
 }
 
-func (s *diskStorage) Write(ctx context.Context, dest string, data []byte) error {
+func (s *diskStorage) Write(ctx context.Context, dest string, data []byte) (string, error) {
 	// Create basedir and sub-directories of the dest
 	subdir := filepath.Dir(dest)
 	fullpath := filepath.Join(s.BaseDir, subdir)
 	if err := os.MkdirAll(fullpath, s.Permission); err != nil {
-		return err
+		return "", err
 	}
 
 	pathname := filepath.Join(s.BaseDir, dest)
-	return os.WriteFile(pathname, data, s.Permission)
+	if err := os.WriteFile(pathname, data, s.Permission); err != nil {
+		return "", err
+	}
+
+	return pathname, nil
 }
 
 func (s *diskStorage) Read(ctx context.Context, pathname string) ([]byte, error) {

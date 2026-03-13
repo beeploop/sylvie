@@ -43,10 +43,10 @@ func TestDiskStorage(t *testing.T) {
 
 		for _, tc := range tests {
 			t.Run(tc.Name, func(t *testing.T) {
-				err := s.Write(context.Background(), tc.Filepath, tc.Input)
+				path, err := s.Write(context.Background(), tc.Filepath, tc.Input)
 				assert.NoError(t, err)
 
-				b, err := s.Read(context.Background(), tc.Filepath)
+				b, err := s.Read(context.Background(), path)
 				assert.NoError(t, err)
 				assert.Equal(t, tc.Expected, b)
 			})

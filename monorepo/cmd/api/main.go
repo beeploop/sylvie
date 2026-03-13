@@ -20,13 +20,13 @@ func main() {
 	r := echo.New()
 
 	server := &http.Server{
-		Addr:    config.Load().PORT,
+		Addr:    config.Load().Server.PORT,
 		Handler: router.RegisterRoutes(r, app),
 	}
 
 	errChan := make(chan error, 1)
 	go func() {
-		log.Printf("api server listening in port: %s\n", config.Load().PORT)
+		log.Printf("api server listening in port: %s\n", config.Load().Server.PORT)
 		if err := server.ListenAndServe(); err != nil {
 			errChan <- err
 		}

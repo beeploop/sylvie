@@ -10,16 +10,16 @@ import (
 )
 
 func main() {
-	conn, ch, err := queue.Connect(config.Load().ConnectionString)
+	conn, ch, err := queue.Connect(config.Load().Queue.ConnectionString)
 	if err != nil {
 		log.Fatalf("failed to open connection to rabbitmq: %s\n", err)
 	}
 
-	if err := queue.DeclareQueue(ch, config.Load().QueueName); err != nil {
+	if err := queue.DeclareQueue(ch, config.Load().Queue.Name); err != nil {
 		log.Fatalf("failed to declare transcoding queue: %s\n", err)
 	}
 
-	consumer := queue.NewConsumer(ch, config.Load().QueueName)
+	consumer := queue.NewConsumer(ch, config.Load().Queue.Name)
 
 	errChan := make(chan error, 1)
 	go func() {
