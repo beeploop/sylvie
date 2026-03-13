@@ -5,6 +5,7 @@ import (
 	"io"
 	"mime/multipart"
 	"path/filepath"
+	"sylvie/internal/http/dtos"
 	"sylvie/internal/storage"
 
 	"github.com/google/uuid"
@@ -20,8 +21,8 @@ func NewUploadControllerImpl(fs storage.Storage) *uploadControllerImpl {
 	}
 }
 
-func (c *uploadControllerImpl) Upload(file *multipart.FileHeader, title string) (UploadResultDTO, error) {
-	var result UploadResultDTO
+func (c *uploadControllerImpl) Upload(file *multipart.FileHeader, title string) (dtos.UploadResult, error) {
+	var result dtos.UploadResult
 
 	content, err := file.Open()
 	if err != nil {
@@ -35,14 +36,16 @@ func (c *uploadControllerImpl) Upload(file *multipart.FileHeader, title string) 
 	}
 
 	videoID := uuid.NewString()
-	path := filepath.Join(videoID, "original.mp4")
+	subpath := filepath.Join(videoID, "original.mp4")
 
-	if _, err := c.store.Write(context.Background(), path, data); err != nil {
+	fullpath, err := c.store.Write(context.Background(), subpath, data)
+	if err != nil {
 		return result, err
 	}
 
 	result.VideoID = videoID
 	result.Status = "processing"
+	result.Path = fullpath
 
 	return result, nil
 }

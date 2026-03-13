@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"sylvie/internal/http/controllers"
+	"sylvie/internal/http/dtos/response"
 
 	"github.com/labstack/echo/v5"
 )
@@ -30,6 +31,9 @@ func UploadHandler(uploadController controllers.UploadController) echo.HandlerFu
 			})
 		}
 
-		return c.JSON(http.StatusCreated, result)
+		return c.JSON(http.StatusCreated, response.UploadResponse{
+			VideoID: result.VideoID,
+			Status:  result.Status,
+		})
 	}
 }

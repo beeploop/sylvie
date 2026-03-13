@@ -1,12 +1,10 @@
 package controllers
 
-import "mime/multipart"
-
-type UploadResultDTO struct {
-	VideoID string `json:"video_id"`
-	Status  string `json:"status"`
-}
+import (
+	"mime/multipart"
+	"sylvie/internal/http/dtos"
+)
 
 type UploadController interface {
-	Upload(*multipart.FileHeader, string) (UploadResultDTO, error)
+	Upload(*multipart.FileHeader, string) (dtos.UploadResult, error)
 }
