@@ -1,8 +1,8 @@
 package application
 
 import (
+	"sylvie/internal/http/controllers"
 	"sylvie/internal/queue"
-	"sylvie/internal/router/controllers"
 
 	"github.com/streadway/amqp"
 )

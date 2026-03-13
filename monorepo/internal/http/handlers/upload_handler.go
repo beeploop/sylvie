@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"net/http"
-	"sylvie/internal/router/controllers"
+	"sylvie/internal/http/controllers"
 
 	"github.com/labstack/echo/v5"
 )

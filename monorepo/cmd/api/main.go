@@ -3,30 +3,21 @@ package main
 import (
 	"context"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"sylvie/internal/application"
-	"sylvie/internal/config"
-	"sylvie/internal/router"
+	"sylvie/internal/http"
 	"syscall"
-
-	"github.com/labstack/echo/v5"
 )
 
 func main() {
 	app := application.Bootstrap()
 
-	r := echo.New()
-
-	server := &http.Server{
-		Addr:    config.Load().Server.PORT,
-		Handler: router.RegisterRoutes(r, app),
-	}
+	server := http.NewServer(app)
 
 	errChan := make(chan error, 1)
 	go func() {
-		log.Printf("api server listening in port: %s\n", config.Load().Server.PORT)
+		log.Printf("api server listening in port: %s\n", server.Addr)
 		if err := server.ListenAndServe(); err != nil {
 			errChan <- err
 		}

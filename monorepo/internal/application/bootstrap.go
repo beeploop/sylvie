@@ -3,8 +3,8 @@ package application
 import (
 	"log"
 	"sylvie/internal/config"
+	"sylvie/internal/http/controllers"
 	"sylvie/internal/queue"
-	"sylvie/internal/router/controllers"
 	"sylvie/internal/storage"
 )
 
