@@ -10,7 +10,7 @@ import (
 func registerRoutes(e *echo.Echo, app *application.Application) *echo.Echo {
 	e.RouteNotFound("*", handlers.NotFoundHandler())
 
-	e.POST("/uploads", handlers.UploadHandler(app.UploadController))
+	e.POST("/uploads", handlers.UploadHandler(app.UploadController, app.Publisher))
 
 	return e
 }

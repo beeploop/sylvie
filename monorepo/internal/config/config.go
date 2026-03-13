@@ -37,6 +37,7 @@ func Load() *Config {
 		},
 		Queue: RabbitMQ{
 			ConnectionString: mustLoadEnv("RABBIT_CONNECTION_STR", "amqp://guest:guest@localhost:5672"),
+			Name:             mustLoadEnv("RABBIT_QUEUE_NAME", "sylvie:transcode"),
 		},
 		Storage: Storage{
 			BaseDir: mustLoadEnv("STORAGE_DIR", "tmp"),
