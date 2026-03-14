@@ -7,6 +7,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type FFMPEG struct {
+	Path string
+}
+
 type Server struct {
 	PORT string
 }
@@ -21,6 +25,7 @@ type Storage struct {
 }
 
 type Config struct {
+	FFMPEG  FFMPEG
 	Server  Server
 	Queue   RabbitMQ
 	Storage Storage
@@ -32,6 +37,9 @@ func Load() *Config {
 	}
 
 	return &Config{
+		FFMPEG: FFMPEG{
+			Path: mustLoadEnv("FFMPEG_PATH", "/usr/bin/ffmpeg"),
+		},
 		Server: Server{
 			PORT: mustLoadEnv("PORT", ":3000"),
 		},

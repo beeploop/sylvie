@@ -8,12 +8,14 @@ import (
 )
 
 type thumbnailGeneratorImpl struct {
+	FfmpegPath string
 	BaseDir    string
 	Permission os.FileMode
 }
 
-func NewThumbnailGenerator(baseDir string, permission os.FileMode) *thumbnailGeneratorImpl {
+func NewThumbnailGenerator(ffmpegPath, baseDir string, permission os.FileMode) *thumbnailGeneratorImpl {
 	return &thumbnailGeneratorImpl{
+		FfmpegPath: ffmpegPath,
 		BaseDir:    baseDir,
 		Permission: permission,
 	}
@@ -39,7 +41,7 @@ func (g *thumbnailGeneratorImpl) outputDirectory(videoID string) string {
 
 func (g *thumbnailGeneratorImpl) buildCommand(input, outDir string) *exec.Cmd {
 	cmd := exec.Command(
-		"ffmpeg",
+		g.FfmpegPath,
 		"-ss", "3",
 		"-i", input,
 		"-frames:v", "1",

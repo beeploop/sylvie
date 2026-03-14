@@ -8,12 +8,14 @@ import (
 )
 
 type transcoderImpl struct {
+	FfmpegPath string
 	BaseDir    string
 	Permission os.FileMode
 }
 
-func NewTranscoder(baseDir string, permission os.FileMode) *transcoderImpl {
+func NewTranscoder(ffmpegPath, baseDir string, permission os.FileMode) *transcoderImpl {
 	return &transcoderImpl{
+		FfmpegPath: ffmpegPath,
 		BaseDir:    baseDir,
 		Permission: permission,
 	}
@@ -39,7 +41,7 @@ func (t *transcoderImpl) outputDirectory(videoID, resolution string) string {
 
 func (t *transcoderImpl) buildCommand(rendetion Rendetion, outDir string) *exec.Cmd {
 	cmd := exec.Command(
-		"ffmpeg",
+		t.FfmpegPath,
 		"-y",
 		"-i", rendetion.InputPath,
 		"-vf", "scale="+rendetion.Resolution.Ratio(),

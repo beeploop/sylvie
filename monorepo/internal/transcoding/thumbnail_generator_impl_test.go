@@ -11,6 +11,8 @@ import (
 )
 
 func TestThumbnailGenerator(t *testing.T) {
+	ffmpegPath := "/usr/bin/ffmpeg"
+
 	t.Run("test thumbnail generator build command", func(t *testing.T) {
 		outDir := t.TempDir()
 
@@ -28,7 +30,7 @@ func TestThumbnailGenerator(t *testing.T) {
 					Filepath: "/path/to/video.mp4",
 				},
 				ExpectedCmd: []string{
-					"ffmpeg",
+					ffmpegPath,
 					"-ss", "3",
 					"-i", "/path/to/video.mp4",
 					"-frames:v", "1",
@@ -38,7 +40,7 @@ func TestThumbnailGenerator(t *testing.T) {
 		}
 
 		for _, tc := range tests {
-			generator := NewThumbnailGenerator(outDir, tc.BaseDirPermission)
+			generator := NewThumbnailGenerator(ffmpegPath, outDir, tc.BaseDirPermission)
 
 			t.Run(tc.Name, func(t *testing.T) {
 				outDir := generator.outputDirectory(tc.Input.VideoID)
@@ -92,7 +94,7 @@ func TestThumbnailGenerator(t *testing.T) {
 			})
 		}
 
-		generator := NewThumbnailGenerator(outDir, os.FileMode(0777))
+		generator := NewThumbnailGenerator(ffmpegPath, outDir, os.FileMode(0777))
 
 		for _, tc := range tests {
 			t.Run(tc.Name, func(t *testing.T) {

@@ -5,10 +5,14 @@ import (
 	"os/exec"
 )
 
-type probeImpl struct{}
+type probeImpl struct {
+	FfmpegPath string
+}
 
-func NewProbeImpl() *probeImpl {
-	return &probeImpl{}
+func NewProbeImpl(ffmpegPath string) *probeImpl {
+	return &probeImpl{
+		FfmpegPath: ffmpegPath,
+	}
 }
 
 func (p *probeImpl) Analyze(inFile string) (ProbeResult, error) {
@@ -30,7 +34,7 @@ func (p *probeImpl) Analyze(inFile string) (ProbeResult, error) {
 
 func (p *probeImpl) buildCommand(inFile string) *exec.Cmd {
 	cmd := exec.Command(
-		"ffmpeg",
+		p.FfmpegPath,
 		"-v",
 		"quiet",
 		"-print_format",
