@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"sylvie/internal/application"
+	"sylvie/internal/application/jobs"
 	"sylvie/internal/config"
 	"sylvie/internal/queue"
 	"syscall"
@@ -21,10 +23,13 @@ func main() {
 
 	consumer := queue.NewConsumer(ch, config.Load().Queue.Name)
 
+	app := application.BootstrapWorker()
+	handler := jobs.NewVideoProcessingHandler(app)
+
 	errChan := make(chan error, 1)
 	go func() {
 		log.Println("starting rabbitmq consumer")
-		if err := consumer.Consume(messageHandler); err != nil {
+		if err := consumer.Consume(handler.Handle); err != nil {
 			errChan <- err
 		}
 	}()
@@ -46,10 +51,4 @@ func main() {
 	conn.Close()
 
 	log.Println("worker exited")
-}
-
-func messageHandler(job queue.Job) error {
-	log.Println("handler received a new job")
-	log.Println(job)
-	return nil
 }

@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	app := application.Bootstrap()
+	app := application.BootstrapAPI()
 
 	server := http.NewServer(app)
 

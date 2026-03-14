@@ -24,7 +24,7 @@ func NewVideoJSONFileRepository(filepath string, permission os.FileMode) *videoJ
 	}
 
 	if err := instance.initialize(); err != nil {
-		log.Fatalf("failed to initialize JSOn file: %s\n", err)
+		log.Fatalf("failed to initialize JSON file: %s\n", err)
 	}
 
 	return instance
@@ -111,6 +111,10 @@ func (r *videoJSONFileRepository) Update(ctx context.Context, id string, update 
 				videos[i].Height.Int64 = int64(*update.Height)
 			}
 
+			if update.Status != nil {
+				videos[i].Status = *update.Status
+			}
+
 			if update.ProcessedAt != nil {
 				videos[i].ProcessedAt.Time = *update.ProcessedAt
 			}
@@ -141,7 +145,7 @@ func (r *videoJSONFileRepository) initialize() error {
 		}
 	}
 
-	if _, err := os.Stat(r.filepath); err != nil && errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(r.filepath); errors.Is(err, os.ErrNotExist) {
 		if err := os.WriteFile(r.filepath, make([]byte, 0), r.permission); err != nil {
 			return err
 		}

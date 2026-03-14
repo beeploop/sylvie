@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
-func NewServer(app *application.Application) *http.Server {
+func NewServer(app *application.APIApplication) *http.Server {
 	r := echo.New()
 
 	return &http.Server{

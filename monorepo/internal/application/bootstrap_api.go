@@ -10,7 +10,7 @@ import (
 	"sylvie/internal/video/repositories"
 )
 
-func Bootstrap() *Application {
+func BootstrapAPI() *APIApplication {
 	conn, ch, err := queue.Connect(config.Load().Queue.ConnectionString)
 	if err != nil {
 		log.Fatalf("failed to open connection to rabbitmq: %s\n", err)
@@ -32,7 +32,7 @@ func Bootstrap() *Application {
 	uploadController := controllers.NewUploadControllerImpl(videoRepository, store)
 	videosController := controllers.NewVideosControllerImpl(videoRepository)
 
-	return &Application{
+	return &APIApplication{
 		RabbitConnection: conn,
 		RabbitChannel:    ch,
 		Publisher:        publisher,

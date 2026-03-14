@@ -44,5 +44,6 @@ type UpdateVideo struct {
 	DurationSeconds    *int
 	Width              *int
 	Height             *int
+	Status             *VideoStatus
 	ProcessedAt        *time.Time
 }
