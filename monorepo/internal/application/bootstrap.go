@@ -22,7 +22,7 @@ func Bootstrap() *Application {
 
 	publisher := queue.NewPublisher(ch, config.Load().Queue.Name)
 
-	videoRepository := repositories.NewVideoJSONFileRepository("tmp", os.FileMode(0777))
+	videoRepository := repositories.NewVideoJSONFileRepository("tmp/db.json", os.FileMode(0777))
 
 	store := storage.NewDiskStorage(storage.DiskStorageConfig{
 		BaseDir:    config.Load().Storage.BaseDir,

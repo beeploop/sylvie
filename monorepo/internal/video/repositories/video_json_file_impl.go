@@ -53,6 +53,11 @@ func (r *videoJSONFileRepository) Create(ctx context.Context, video models.NewVi
 		return newVideo, err
 	}
 
+	newVideo.ID = video.ID
+	newVideo.Title = video.Title
+	newVideo.Status = string(video.Status)
+	newVideo.OriginalPath = video.OriginalPath
+
 	return newVideo, nil
 }
 
