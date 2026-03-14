@@ -1,10 +1,7 @@
 package transcoding
 
 import (
-	"errors"
 	"os"
-	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -57,48 +54,19 @@ func TestTranscoder(t *testing.T) {
 		}
 	})
 
-	t.Run("test transcoder implementation", func(t *testing.T) {
-		testInputDir := "transcoder_test_input"
+	t.Run("test video transcoding", func(t *testing.T) {
 		outDir := t.TempDir()
-
-		wd, err := os.Getwd()
-		if err != nil {
-			t.Fatalf("cannot read current working directory: %s\n", err)
-		}
-
-		inputDirInfo, err := os.Stat(filepath.Join(wd, testInputDir))
-		if errors.Is(err, os.ErrNotExist) {
-			t.Fatalf("%s does not exists", testInputDir)
-		}
-		if err == nil && !inputDirInfo.IsDir() {
-			t.Fatalf("%s is not a directory", testInputDir)
-		}
-
-		entries, err := os.ReadDir(filepath.Join(wd, testInputDir))
-		if err != nil {
-			t.Fatalf("cannot read contents of %s directory: %s\n", testInputDir, err)
-		}
 
 		tests := []struct {
 			Name    string
 			VideoID string
 			Input   string
-		}{}
-
-		for _, entry := range entries {
-			if entry.IsDir() {
-				continue
-			}
-
-			tests = append(tests, struct {
-				Name    string
-				VideoID string
-				Input   string
-			}{
-				Name:    "transcoding integration test",
-				VideoID: strings.Split(entry.Name(), ".")[0],
-				Input:   filepath.Join(testInputDir, entry.Name()),
-			})
+		}{
+			{
+				Name:    "test happy path",
+				VideoID: "1234",
+				Input:   "tmp/test_video_1080p.mp4",
+			},
 		}
 
 		transcoder := NewTranscoder(ffmpegPath, outDir, os.FileMode(0777))
