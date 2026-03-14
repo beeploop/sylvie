@@ -33,7 +33,7 @@ type Video struct {
 func ModelToVideo(model models.Video) Video {
 	return Video{
 		ID:                 model.ID,
-		Title:              model.ID,
+		Title:              model.Title,
 		Status:             string(model.Status),
 		OriginalPath:       model.OriginalPath,
 		MasterPlaylistPath: model.MasterPlaylistPath.String,

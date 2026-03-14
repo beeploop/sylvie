@@ -13,4 +13,5 @@ type Application struct {
 	Publisher        queue.Publisher
 
 	UploadController controllers.UploadController
+	VideosController controllers.VideosController
 }

@@ -11,6 +11,7 @@ func registerRoutes(e *echo.Echo, app *application.Application) *echo.Echo {
 	e.RouteNotFound("*", handlers.NotFoundHandler())
 
 	e.POST("/uploads", handlers.UploadHandler(app.UploadController, app.Publisher))
+	e.GET("/videos/:id", handlers.VideosHandler(app.VideosController))
 
 	return e
 }

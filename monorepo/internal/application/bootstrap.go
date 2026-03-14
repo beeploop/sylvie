@@ -30,6 +30,7 @@ func Bootstrap() *Application {
 	})
 
 	uploadController := controllers.NewUploadControllerImpl(videoRepository, store)
+	videosController := controllers.NewVideosControllerImpl(videoRepository)
 
 	return &Application{
 		RabbitConnection: conn,
@@ -37,5 +38,6 @@ func Bootstrap() *Application {
 		Publisher:        publisher,
 
 		UploadController: uploadController,
+		VideosController: videosController,
 	}
 }
