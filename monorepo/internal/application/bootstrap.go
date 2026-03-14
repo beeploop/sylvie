@@ -2,10 +2,12 @@ package application
 
 import (
 	"log"
+	"os"
 	"sylvie/internal/config"
 	"sylvie/internal/http/controllers"
 	"sylvie/internal/queue"
 	"sylvie/internal/storage"
+	"sylvie/internal/video/repositories"
 )
 
 func Bootstrap() *Application {
@@ -20,12 +22,14 @@ func Bootstrap() *Application {
 
 	publisher := queue.NewPublisher(ch, config.Load().Queue.Name)
 
+	videoRepository := repositories.NewVideoJSONFileRepository("tmp", os.FileMode(0777))
+
 	store := storage.NewDiskStorage(storage.DiskStorageConfig{
 		BaseDir:    config.Load().Storage.BaseDir,
 		Permission: 0777,
 	})
 
-	uploadController := controllers.NewUploadControllerImpl(store)
+	uploadController := controllers.NewUploadControllerImpl(videoRepository, store)
 
 	return &Application{
 		RabbitConnection: conn,

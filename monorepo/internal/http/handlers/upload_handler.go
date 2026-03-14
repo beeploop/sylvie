@@ -28,14 +28,14 @@ func UploadHandler(
 			})
 		}
 
-		result, err := uploadController.Upload(file, title)
+		video, err := uploadController.Upload(file, title)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"error": "upload failed",
 			})
 		}
 
-		job := queue.Job{VideoID: result.VideoID, Path: result.Path}
+		job := queue.Job{VideoID: video.ID, Path: video.OriginalPath}
 		if err := publisher.Publish(job); err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]any{
 				"error": "failed to publish upload event",
@@ -43,8 +43,8 @@ func UploadHandler(
 		}
 
 		return c.JSON(http.StatusCreated, response.UploadResponse{
-			VideoID: result.VideoID,
-			Status:  result.Status,
+			VideoID: video.ID,
+			Status:  video.Status,
 		})
 	}
 }
