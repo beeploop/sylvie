@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"sylvie/internal/video/entities"
 	"sylvie/internal/video/models"
+	"time"
 )
 
 type videoJSONFileRepository struct {
@@ -42,6 +43,7 @@ func (r *videoJSONFileRepository) Create(ctx context.Context, video models.NewVi
 		Title:        video.Title,
 		Status:       video.Status,
 		OriginalPath: video.OriginalPath,
+		CreatedAt:    time.Now(),
 	})
 
 	b, err := json.Marshal(videos)
