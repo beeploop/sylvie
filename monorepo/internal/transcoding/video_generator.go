@@ -28,6 +28,7 @@ func GenerateTestVideo(input TestVideoOpts) (string, error) {
 
 	cmd := exec.Command(
 		input.FfmpegPath,
+		"-y",
 		"-f", "lavfi",
 		"-i", fmt.Sprintf("testsrc=size=%s:rate=%d", input.Resolution.Dimension(), input.Framerate),
 		"-f", "lavfi", "-i", "sine=frequency=1000",
@@ -38,6 +39,8 @@ func GenerateTestVideo(input TestVideoOpts) (string, error) {
 		input.OutFile,
 	)
 
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		return "", err
 	}
