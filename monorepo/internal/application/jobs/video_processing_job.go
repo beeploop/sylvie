@@ -30,19 +30,40 @@ func NewVideoProcessingHandler(app *application.WorkerApplication) *VideoProcess
 }
 
 func (h *VideoProcessingHandler) Handle(job queue.Job) error {
+	log.Printf("started processing: %s\n", job.VideoID)
+
 	ctx := context.Background()
 
-	_, err := h.Videos.FindByID(ctx, job.VideoID)
+	video, err := h.Videos.FindByID(ctx, job.VideoID)
 	if err != nil {
 		return err
 	}
 
 	now := time.Now()
-	h.Videos.Update(ctx, job.VideoID, models.UpdateVideo{
+	if _, err := h.Videos.Update(ctx, job.VideoID, models.UpdateVideo{
 		Status:      &models.STATUS_PROCESSING,
 		ProcessedAt: &now,
-	})
+	}); err != nil {
+		return err
+	}
 
-	log.Printf("started processing: %s\n", job.VideoID)
+	metadata, err := h.Probe.Analyze(video.OriginalPath)
+	if err != nil {
+		_, err := h.Videos.Update(ctx, job.VideoID, models.UpdateVideo{
+			Status: &models.STATUS_FAILED,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	if _, err := h.Videos.Update(ctx, job.VideoID, models.UpdateVideo{
+		DurationSeconds: &metadata.Duration,
+		Width:           &metadata.Width,
+		Height:          &metadata.Height,
+	}); err != nil {
+		return err
+	}
+
 	return nil
 }

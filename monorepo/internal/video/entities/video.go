@@ -25,7 +25,7 @@ type Video struct {
 	OriginalPath       string
 	MasterPlaylistPath string
 	ThumbnailPath      string
-	DurationSeconds    int
+	DurationSeconds    float64
 	Width              int
 	Height             int
 }
@@ -38,7 +38,7 @@ func ModelToVideo(model models.Video) Video {
 		OriginalPath:       model.OriginalPath,
 		MasterPlaylistPath: model.MasterPlaylistPath.String,
 		ThumbnailPath:      model.ThumbnailPath.String,
-		DurationSeconds:    int(model.DurationSeconds.Int64),
+		DurationSeconds:    model.DurationSeconds.Float64,
 		Width:              int(model.Width.Int64),
 		Height:             int(model.Height.Int64),
 	}

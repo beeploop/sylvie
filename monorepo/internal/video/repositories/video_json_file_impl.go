@@ -100,7 +100,7 @@ func (r *videoJSONFileRepository) Update(ctx context.Context, id string, update 
 			}
 
 			if update.DurationSeconds != nil {
-				videos[i].DurationSeconds.Int64 = int64(*update.DurationSeconds)
+				videos[i].DurationSeconds.Float64 = *update.DurationSeconds
 			}
 
 			if update.Width != nil {

@@ -23,9 +23,9 @@ type Video struct {
 	MasterPlaylistPath sql.NullString `db:"master_playlist_path" json:"master_playlist_path"`
 	ThumbnailPath      sql.NullString `db:"thumbnail_path" json:"thumbnail_path"`
 
-	DurationSeconds sql.NullInt64 `db:"duration_seconds" json:"duration_seconds"`
-	Width           sql.NullInt64 `db:"width" json:"width"`
-	Height          sql.NullInt64 `db:"height" json:"height"`
+	DurationSeconds sql.NullFloat64 `db:"duration_seconds" json:"duration_seconds"`
+	Width           sql.NullInt64   `db:"width" json:"width"`
+	Height          sql.NullInt64   `db:"height" json:"height"`
 
 	CreatedAt   time.Time    `db:"created_at" json:"created_at"`
 	ProcessedAt sql.NullTime `db:"processed_at" json:"processed_at"`
@@ -41,7 +41,7 @@ type NewVideo struct {
 type UpdateVideo struct {
 	MasterPlaylistPath *string
 	ThumbnailPath      *string
-	DurationSeconds    *int
+	DurationSeconds    *float64
 	Width              *int
 	Height             *int
 	Status             *VideoStatus
