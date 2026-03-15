@@ -3,44 +3,45 @@ package transcoding
 import (
 	"encoding/json"
 	"os/exec"
+	"sylvie/internal/video/entities"
 )
 
 type probeImpl struct {
-	FfmpegPath string
+	FfprobePath string
 }
 
 func NewProbeImpl(ffmpegPath string) *probeImpl {
 	return &probeImpl{
-		FfmpegPath: ffmpegPath,
+		FfprobePath: ffmpegPath,
 	}
 }
 
-func (p *probeImpl) Analyze(inFile string) (ProbeResult, error) {
-	var result ProbeResult
-
+func (p *probeImpl) Analyze(inFile string) (entities.VideoMetadata, error) {
 	cmd := p.buildCommand(inFile)
 
 	data, err := cmd.Output()
 	if err != nil {
-		return result, err
+		return entities.VideoMetadata{}, err
 	}
 
+	var result ProbeResult
 	if err := json.Unmarshal(data, &result); err != nil {
-		return result, err
+		return entities.VideoMetadata{}, err
 	}
 
-	return result, nil
+	return normalizeProbeResult(result)
 }
 
 func (p *probeImpl) buildCommand(inFile string) *exec.Cmd {
 	cmd := exec.Command(
-		p.FfmpegPath,
+		p.FfprobePath,
 		"-v",
 		"quiet",
 		"-print_format",
 		"json",
 		"-show_format",
 		"-show_streams",
+		"-select_streams", "v:0",
 		inFile,
 	)
 

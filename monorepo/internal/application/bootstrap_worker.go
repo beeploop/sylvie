@@ -10,9 +10,9 @@ import (
 func BootstrapWorker() *WorkerApplication {
 	videoRepository := repositories.NewVideoJSONFileRepository("tmp/db.json", os.FileMode(0777))
 
-	probe := transcoding.NewProbeImpl(config.Load().FFMPEG.Path)
-	transcoder := transcoding.NewTranscoder(config.Load().FFMPEG.Path, "tmp/transcoded/", os.FileMode(0777))
-	thumbnailGenerator := transcoding.NewThumbnailGenerator(config.Load().FFMPEG.Path, "tmp/transcoded/", os.FileMode(0777))
+	probe := transcoding.NewProbeImpl(config.Load().FFMPEG.FfprobePath)
+	transcoder := transcoding.NewTranscoder(config.Load().FFMPEG.FfmpegPath, "tmp/transcoded/", os.FileMode(0777))
+	thumbnailGenerator := transcoding.NewThumbnailGenerator(config.Load().FFMPEG.FfmpegPath, "tmp/transcoded/", os.FileMode(0777))
 	playlistGenerator := transcoding.NewPlaylistGenerator("tmp/transcoded/", os.FileMode(0777))
 
 	return &WorkerApplication{

@@ -8,7 +8,8 @@ import (
 )
 
 type FFMPEG struct {
-	Path string
+	FfmpegPath  string
+	FfprobePath string
 }
 
 type Server struct {
@@ -38,7 +39,8 @@ func Load() *Config {
 
 	return &Config{
 		FFMPEG: FFMPEG{
-			Path: mustLoadEnv("FFMPEG_PATH", "/usr/bin/ffmpeg"),
+			FfmpegPath:  mustLoadEnv("FFMPEG_PATH", "/usr/bin/ffmpeg"),
+			FfprobePath: mustLoadEnv("FFPROBE_PATH", "/usr/bin/ffprobe"),
 		},
 		Server: Server{
 			PORT: mustLoadEnv("PORT", ":3000"),
