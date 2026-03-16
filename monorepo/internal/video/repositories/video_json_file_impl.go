@@ -12,6 +12,23 @@ import (
 	"time"
 )
 
+type VideoJSON struct {
+	ID     string `json:"id"`
+	Title  string `json:"title"`
+	Status string `json:"status"`
+
+	OriginalPath       string `json:"original_path"`
+	MasterPlaylistPath string `json:"master_playlist_path"`
+	ThumbnailPath      string `json:"thumbnail_path"`
+
+	DurationSeconds float64 `json:"duration_seconds"`
+	Width           int64   `json:"width"`
+	Height          int64   `json:"height"`
+
+	CreatedAt   time.Time `json:"created_at"`
+	ProcessedAt time.Time `json:"processed_at"`
+}
+
 type videoJSONFileRepository struct {
 	filepath   string
 	permission os.FileMode
@@ -38,10 +55,10 @@ func (r *videoJSONFileRepository) Create(ctx context.Context, video models.NewVi
 		return newVideo, err
 	}
 
-	videos = append(videos, models.Video{
+	videos = append(videos, VideoJSON{
 		ID:           video.ID,
 		Title:        video.Title,
-		Status:       video.Status,
+		Status:       string(video.Status),
 		OriginalPath: video.OriginalPath,
 		CreatedAt:    time.Now(),
 	})
@@ -73,7 +90,17 @@ func (r *videoJSONFileRepository) FindByID(ctx context.Context, id string) (enti
 
 	for _, vid := range videos {
 		if vid.ID == id {
-			video = entities.ModelToVideo(vid)
+			video = entities.Video{
+				ID:                 vid.ID,
+				Title:              vid.Title,
+				Status:             vid.Status,
+				OriginalPath:       vid.OriginalPath,
+				MasterPlaylistPath: vid.MasterPlaylistPath,
+				ThumbnailPath:      vid.ThumbnailPath,
+				DurationSeconds:    vid.DurationSeconds,
+				Width:              int(vid.Width),
+				Height:             int(vid.Height),
+			}
 			return video, nil
 		}
 	}
@@ -92,34 +119,44 @@ func (r *videoJSONFileRepository) Update(ctx context.Context, id string, update 
 	for i := range videos {
 		if videos[i].ID == id {
 			if update.MasterPlaylistPath != nil {
-				videos[i].MasterPlaylistPath.String = *update.MasterPlaylistPath
+				videos[i].MasterPlaylistPath = *update.MasterPlaylistPath
 			}
 
 			if update.ThumbnailPath != nil {
-				videos[i].ThumbnailPath.String = *update.ThumbnailPath
+				videos[i].ThumbnailPath = *update.ThumbnailPath
 			}
 
 			if update.DurationSeconds != nil {
-				videos[i].DurationSeconds.Float64 = *update.DurationSeconds
+				videos[i].DurationSeconds = *update.DurationSeconds
 			}
 
 			if update.Width != nil {
-				videos[i].Width.Int64 = int64(*update.Width)
+				videos[i].Width = int64(*update.Width)
 			}
 
 			if update.Height != nil {
-				videos[i].Height.Int64 = int64(*update.Height)
+				videos[i].Height = int64(*update.Height)
 			}
 
 			if update.Status != nil {
-				videos[i].Status = *update.Status
+				videos[i].Status = string(*update.Status)
 			}
 
 			if update.ProcessedAt != nil {
-				videos[i].ProcessedAt.Time = *update.ProcessedAt
+				videos[i].ProcessedAt = *update.ProcessedAt
 			}
 
-			video = entities.ModelToVideo(videos[i])
+			video = entities.Video{
+				ID:                 videos[i].ID,
+				Title:              videos[i].Title,
+				Status:             videos[i].Status,
+				OriginalPath:       videos[i].OriginalPath,
+				MasterPlaylistPath: videos[i].MasterPlaylistPath,
+				ThumbnailPath:      videos[i].ThumbnailPath,
+				DurationSeconds:    videos[i].DurationSeconds,
+				Width:              int(videos[i].Width),
+				Height:             int(videos[i].Height),
+			}
 			break
 		}
 	}
@@ -154,8 +191,8 @@ func (r *videoJSONFileRepository) initialize() error {
 	return nil
 }
 
-func (r *videoJSONFileRepository) read() ([]models.Video, error) {
-	videos := make([]models.Video, 0)
+func (r *videoJSONFileRepository) read() ([]VideoJSON, error) {
+	videos := make([]VideoJSON, 0)
 
 	content, err := os.ReadFile(r.filepath)
 	if err != nil {

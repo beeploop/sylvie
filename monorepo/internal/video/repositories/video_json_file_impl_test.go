@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"sylvie/internal/video/models"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -25,7 +26,7 @@ func TestVideoJSONFileRepository(t *testing.T) {
 		tests := []struct {
 			Name     string
 			Input    []models.NewVideo
-			Expected []models.Video
+			Expected []VideoJSON
 		}{
 			{
 				Name: "test happy path",
@@ -37,19 +38,20 @@ func TestVideoJSONFileRepository(t *testing.T) {
 						Status:       models.STATUS_UPLOADED,
 					},
 				},
-				Expected: []models.Video{
+				Expected: []VideoJSON{
 					{
 						ID:           "1234",
 						Title:        "test video",
 						OriginalPath: "path/to/video.mp4",
-						Status:       models.STATUS_UPLOADED,
+						Status:       string(models.STATUS_UPLOADED),
+						CreatedAt:    time.Now(),
 					},
 				},
 			},
 			{
 				Name:     "test insert empty value",
 				Input:    []models.NewVideo{},
-				Expected: []models.Video{},
+				Expected: []VideoJSON{},
 			},
 		}
 
@@ -66,7 +68,20 @@ func TestVideoJSONFileRepository(t *testing.T) {
 
 				videos, err := repo.read()
 				assert.NoError(t, err)
-				assert.EqualValues(t, tc.Expected, videos)
+				assert.Equal(t, len(tc.Expected), len(videos))
+
+				for i := range videos {
+					assert.Equal(t, tc.Expected[i].ID, videos[i].ID)
+					assert.Equal(t, tc.Expected[i].Title, videos[i].Title)
+					assert.Equal(t, tc.Expected[i].OriginalPath, videos[i].OriginalPath)
+					assert.Equal(t, tc.Expected[i].Status, videos[i].Status)
+					assert.Equal(t, tc.Expected[i].MasterPlaylistPath, videos[i].MasterPlaylistPath)
+					assert.Equal(t, tc.Expected[i].Width, videos[i].Width)
+					assert.Equal(t, tc.Expected[i].Height, videos[i].Height)
+					assert.Equal(t, tc.Expected[i].ThumbnailPath, videos[i].ThumbnailPath)
+					assert.Equal(t, tc.Expected[i].DurationSeconds, videos[i].DurationSeconds)
+					assert.WithinDuration(t, tc.Expected[i].CreatedAt, videos[i].CreatedAt, time.Second)
+				}
 			})
 		}
 	})
