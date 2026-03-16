@@ -4,10 +4,9 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"sylvie/internal/application"
-	"sylvie/internal/application/jobs"
 	"sylvie/internal/config"
 	"sylvie/internal/queue"
+	"sylvie/internal/workers"
 	"syscall"
 )
 
@@ -22,14 +21,12 @@ func main() {
 	}
 
 	consumer := queue.NewConsumer(ch, config.Load().Queue.Name)
-
-	app := application.BootstrapWorker()
-	handler := jobs.NewVideoProcessingHandler(app)
+	manager := workers.NewManager(config.Load())
 
 	errChan := make(chan error, 1)
 	go func() {
 		log.Println("starting rabbitmq consumer")
-		if err := consumer.Consume(handler.Handle); err != nil {
+		if err := consumer.Consume(manager.Handle); err != nil {
 			errChan <- err
 		}
 	}()

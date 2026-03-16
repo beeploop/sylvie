@@ -6,12 +6,13 @@ import (
 	"os"
 	"os/signal"
 	"sylvie/internal/application"
+	"sylvie/internal/config"
 	"sylvie/internal/http"
 	"syscall"
 )
 
 func main() {
-	app := application.BootstrapAPI()
+	app := application.Bootstrap(config.Load())
 
 	server := http.NewServer(app)
 

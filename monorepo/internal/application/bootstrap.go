@@ -10,29 +10,29 @@ import (
 	"sylvie/internal/video/repositories"
 )
 
-func BootstrapAPI() *APIApplication {
-	conn, ch, err := queue.Connect(config.Load().Queue.ConnectionString)
+func Bootstrap(config *config.Config) *Application {
+	conn, ch, err := queue.Connect(config.Queue.ConnectionString)
 	if err != nil {
 		log.Fatalf("failed to open connection to rabbitmq: %s\n", err)
 	}
 
-	if err := queue.DeclareQueue(ch, config.Load().Queue.Name); err != nil {
+	if err := queue.DeclareQueue(ch, config.Queue.Name); err != nil {
 		log.Fatalf("failed to declare transcoding queue: %s\n", err)
 	}
 
-	publisher := queue.NewPublisher(ch, config.Load().Queue.Name)
+	publisher := queue.NewPublisher(ch, config.Queue.Name)
 
 	videoRepository := repositories.NewVideoJSONFileRepository("tmp/db.json", os.FileMode(0777))
 
 	store := storage.NewDiskStorage(storage.DiskStorageConfig{
-		BaseDir:    config.Load().Storage.BaseDir,
+		BaseDir:    config.Storage.BaseDir,
 		Permission: 0777,
 	})
 
 	uploadController := controllers.NewUploadControllerImpl(videoRepository, store)
 	videosController := controllers.NewVideosControllerImpl(videoRepository)
 
-	return &APIApplication{
+	return &Application{
 		RabbitConnection: conn,
 		RabbitChannel:    ch,
 		Publisher:        publisher,

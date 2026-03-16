@@ -2,13 +2,13 @@ GRC = $(shell command -v grc 2>/dev/null)
 
 build:
 	@go build -o bin/api/sylvie_api cmd/api/main.go
-	@go build -o bin/worker/sylvie_worker cmd/worker/main.go
+	@go build -o bin/processor/sylvie_worker cmd/processor/main.go
 
 run-api:
 	@go run ./cmd/api/main.go
 
-run-worker:
-	@go run ./cmd/worker/main.go
+run-processor:
+	@go run ./cmd/processor/main.go
 
 test:
 	@$(GRC) go test -v -cover -failfast ./...
