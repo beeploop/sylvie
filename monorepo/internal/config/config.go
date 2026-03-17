@@ -7,6 +7,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type DB struct {
+	JSON_DB_PATH string
+}
+
 type FFMPEG struct {
 	FfmpegPath  string
 	FfprobePath string
@@ -26,6 +30,7 @@ type Storage struct {
 }
 
 type Config struct {
+	DB      DB
 	FFMPEG  FFMPEG
 	Server  Server
 	Queue   RabbitMQ
@@ -38,6 +43,9 @@ func Load() *Config {
 	}
 
 	return &Config{
+		DB: DB{
+			JSON_DB_PATH: mustLoadEnv("JSON_DB_FILE_PATH", "tmp/db.json"),
+		},
 		FFMPEG: FFMPEG{
 			FfmpegPath:  mustLoadEnv("FFMPEG_PATH", "/usr/bin/ffmpeg"),
 			FfprobePath: mustLoadEnv("FFPROBE_PATH", "/usr/bin/ffprobe"),

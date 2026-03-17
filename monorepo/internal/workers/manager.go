@@ -22,12 +22,12 @@ type Manager struct {
 }
 
 func NewManager(config *config.Config) *Manager {
-	videoRepository := repositories.NewVideoJSONFileRepository("tmp/db.json", os.FileMode(0777))
+	videoRepository := repositories.NewVideoJSONFileRepository(config.DB.JSON_DB_PATH, os.FileMode(0777))
 
 	probe := transcoding.NewProbeImpl(config.FFMPEG.FfprobePath)
-	transcoder := transcoding.NewTranscoder(config.FFMPEG.FfmpegPath, "tmp/videos/", os.FileMode(0777))
-	thumbnailGenerator := transcoding.NewThumbnailGenerator(config.FFMPEG.FfmpegPath, "tmp/videos/", os.FileMode(0777))
-	playlistGenerator := transcoding.NewPlaylistGenerator("tmp/videos/", os.FileMode(0777))
+	transcoder := transcoding.NewTranscoder(config.FFMPEG.FfmpegPath, config.Storage.BaseDir, os.FileMode(0777))
+	thumbnailGenerator := transcoding.NewThumbnailGenerator(config.FFMPEG.FfmpegPath, config.Storage.BaseDir, os.FileMode(0777))
+	playlistGenerator := transcoding.NewPlaylistGenerator(config.Storage.BaseDir, os.FileMode(0777))
 
 	return &Manager{
 		Videos:     videoRepository,
