@@ -14,6 +14,12 @@ const (
 	RES_360p  Resolution = "360p"
 )
 
+var AllResolutions = []Resolution{
+	RES_1080p,
+	RES_720p,
+	RES_360p,
+}
+
 func (r Resolution) Name() string {
 	return string(r)
 }
@@ -106,4 +112,16 @@ func ResolutionFromDimension(dimension string) Resolution {
 func ToBitrateSuffixNotation(bitrate int) string {
 	kbps := bitrate / 1_000
 	return fmt.Sprintf("%dk", kbps)
+}
+
+func SelectResolutions(height int) []Resolution {
+	resolutions := make([]Resolution, 0)
+
+	for _, res := range AllResolutions {
+		if height >= res.Height() {
+			resolutions = append(resolutions, res)
+		}
+	}
+
+	return resolutions
 }

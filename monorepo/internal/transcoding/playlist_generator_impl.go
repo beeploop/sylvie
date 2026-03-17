@@ -41,7 +41,7 @@ func (g *playlistGeneratorImpl) Generate(rendetions []Rendetion) (string, error)
 		b.WriteString(fmt.Sprintf("%s/index.m3u8\n", rendetion.Resolution.Name()))
 	}
 
-	path := filepath.Join(g.BaseDir, "master.m3u8")
+	path := filepath.Join(outDir, "master.m3u8")
 	if err := os.WriteFile(path, []byte(b.String()), g.Permission); err != nil {
 		return "", err
 	}

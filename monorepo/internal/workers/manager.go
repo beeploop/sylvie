@@ -2,6 +2,7 @@ package workers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"sylvie/internal/config"
@@ -24,9 +25,9 @@ func NewManager(config *config.Config) *Manager {
 	videoRepository := repositories.NewVideoJSONFileRepository("tmp/db.json", os.FileMode(0777))
 
 	probe := transcoding.NewProbeImpl(config.FFMPEG.FfprobePath)
-	transcoder := transcoding.NewTranscoder(config.FFMPEG.FfmpegPath, "tmp/transcoded/", os.FileMode(0777))
-	thumbnailGenerator := transcoding.NewThumbnailGenerator(config.FFMPEG.FfmpegPath, "tmp/transcoded/", os.FileMode(0777))
-	playlistGenerator := transcoding.NewPlaylistGenerator("tmp/transcoded/", os.FileMode(0777))
+	transcoder := transcoding.NewTranscoder(config.FFMPEG.FfmpegPath, "tmp/videos/", os.FileMode(0777))
+	thumbnailGenerator := transcoding.NewThumbnailGenerator(config.FFMPEG.FfmpegPath, "tmp/videos/", os.FileMode(0777))
+	playlistGenerator := transcoding.NewPlaylistGenerator("tmp/videos/", os.FileMode(0777))
 
 	return &Manager{
 		Videos:     videoRepository,
@@ -71,6 +72,43 @@ func (m *Manager) Handle(job queue.Job) error {
 		Height:          &metadata.Height,
 	}); err != nil {
 		return err
+	}
+
+	resolutions := transcoding.SelectResolutions(metadata.Height)
+
+	{
+		path, err := m.Thumbnails.Generate(transcoding.ThumbnailInput{
+			VideoID:  job.VideoID,
+			Filepath: job.Path,
+		})
+		if err != nil {
+			return err
+		}
+		fmt.Printf("path for thumbnail: %s\n", path)
+	}
+
+	rendetions := make([]transcoding.Rendetion, 0)
+	for _, resolution := range resolutions {
+		rendetion := transcoding.Rendetion{
+			VideoID:    job.VideoID,
+			InputPath:  job.Path,
+			Resolution: resolution,
+		}
+		rendetions = append(rendetions, rendetion)
+
+		path, err := m.Transcoder.Transcode(rendetion)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("path for resolution %s: %s\n", resolution.Name(), path)
+	}
+
+	{
+		path, err := m.Playlist.Generate(rendetions)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("path for master playlist: %s\n", path)
 	}
 
 	return nil
