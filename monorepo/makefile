@@ -10,6 +10,9 @@ run-api:
 run-processor:
 	@go run ./cmd/processor/main.go
 
+views:
+	@go tool templ generate
+
 test:
 	@$(GRC) go test -v -cover -failfast ./...
 
