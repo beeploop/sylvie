@@ -84,7 +84,12 @@ func (m *Manager) Handle(job queue.Job) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("path for thumbnail: %s\n", path)
+
+		if _, err := m.Videos.Update(ctx, job.VideoID, models.UpdateVideo{
+			ThumbnailPath: &path,
+		}); err != nil {
+			return err
+		}
 	}
 
 	rendetions := make([]transcoding.Rendetion, 0)
@@ -108,7 +113,12 @@ func (m *Manager) Handle(job queue.Job) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("path for master playlist: %s\n", path)
+
+		if _, err := m.Videos.Update(ctx, job.VideoID, models.UpdateVideo{
+			MasterPlaylistPath: &path,
+		}); err != nil {
+			return err
+		}
 	}
 
 	return nil
