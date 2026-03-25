@@ -1,5 +1,73 @@
+:root {
+    --dark: #000000;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+.header {
+    display: flex;
+    gap: 2em;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 1em;
+    padding-block: 0.5em;
+    border-bottom: 1px solid var(--dark);
+
+    .logo {
+        text-decoration: none;
+        color: var(--dark);
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+
+    .search {
+        display: flex;
+        border: 1px solid var(--dark);
+
+        .input,
+        .button {
+            outline: none;
+            border: none;
+            padding-inline: 1em;
+            padding-block: 0.5em;
+        }
+
+        .input {
+            min-width: 20em;
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .button {
+            cursor: pointer;
+            border-left: 1px solid var(--dark);
+            color: var(--dark);
+
+            .icon {
+                width: 1em;
+                aspect-ratio: 1/1;
+            }
+        }
+    }
+
+    .menu {
+        cursor: pointer;
+        color: var(--dark);
+
+        .icon {
+            width: 1em;
+            aspect-ratio: 1/1;
+        }
+    }
+}
+
+.main {
+    padding-block: 1em;
+    padding-inline: var(--main-padding);
 }

@@ -1,11 +1,15 @@
 package pages
 
 import "sylvie/internal/http/views/layouts"
+import "sylvie/internal/http/views/components"
 
 templ HomePage() {
 	@layouts.Root() {
 		<div>
-			<h1>hello world</h1>
+			@components.Header()
+			<main class="main">
+				<h1>hello world</h1>
+			</main>
 		</div>
 	}
 }
