@@ -77,10 +77,16 @@
         gap: 1em;
 
         .video {
+            padding: 0.5em;
+            border-radius: 0.5em;
             text-decoration: none;
             color: var(--dark);
             display: grid;
             gap: 0.5em;
+
+            &:hover {
+                background-color: lightgrey;
+            }
 
             .thumbnail {
                 display: grid;
