@@ -61,8 +61,26 @@
         color: var(--dark);
 
         .icon {
-            width: 1em;
+            width: 1.75em;
             aspect-ratio: 1/1;
+        }
+
+        .icon.hover--hide {
+            display: block;
+        }
+
+        .icon.hover--show {
+            display: none;
+        }
+
+        &:hover {
+            .icon.hover--hide {
+                display: none
+            }
+
+            .icon.hover--show {
+                display: block;
+            }
         }
     }
 }
