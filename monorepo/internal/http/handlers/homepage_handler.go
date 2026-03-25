@@ -1,9 +1,12 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
+	"slices"
+	"sylvie/internal/http/controllers"
 	"sylvie/internal/http/views/pages"
+	"sylvie/internal/utils"
+	"sylvie/internal/video/entities"
 
 	"github.com/labstack/echo/v5"
 )
@@ -12,7 +15,7 @@ type HomepageQueryParams struct {
 	Search string `query:"search"`
 }
 
-func Homepage() echo.HandlerFunc {
+func Homepage(videosController controllers.VideosController) echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		ctx := c.Request().Context()
 
@@ -21,8 +24,23 @@ func Homepage() echo.HandlerFunc {
 			return c.Redirect(http.StatusSeeOther, "/?error="+err.Error())
 		}
 
-		fmt.Println(queries)
+		videos, err := videosController.Search(queries.Search)
+		if err != nil {
+			return c.Redirect(http.StatusSeeOther, "/?error="+err.Error())
+		}
 
-		return pages.HomePage().Render(ctx, c.Response())
+		viewmodel := pages.HomepageViewModel{
+			Videos: slices.Collect(
+				utils.Map(videos, func(video entities.Video) pages.Video {
+					return pages.Video{
+						ID:            video.ID,
+						Title:         video.Title,
+						ThumbnailPath: video.ThumbnailPath,
+					}
+				}),
+			),
+		}
+
+		return pages.HomePage(viewmodel).Render(ctx, c.Response())
 	}
 }

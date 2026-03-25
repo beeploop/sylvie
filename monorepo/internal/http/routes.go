@@ -18,7 +18,7 @@ func registerRoutes(e *echo.Echo, app *application.Application) *echo.Echo {
 	e.StaticFS("/scripts", echo.MustSubFS(assets, "static/js"))
 	e.StaticFS("/assets", echo.MustSubFS(assets, "static/assets"))
 
-	e.GET("/", handlers.Homepage())
+	e.GET("/", handlers.Homepage(app.VideosController))
 
 	e.POST("/uploads", handlers.UploadHandler(app.UploadController, app.Publisher))
 	e.GET("/videos/:id", handlers.VideosHandler(app.VideosController))

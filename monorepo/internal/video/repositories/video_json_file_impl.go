@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"sylvie/internal/video/entities"
 	"sylvie/internal/video/models"
 	"time"
@@ -78,6 +79,34 @@ func (r *videoJSONFileRepository) Create(ctx context.Context, video models.NewVi
 	newVideo.OriginalPath = video.OriginalPath
 
 	return newVideo, nil
+}
+
+func (r *videoJSONFileRepository) FindByTitle(ctx context.Context, title string) ([]entities.Video, error) {
+	videos := make([]entities.Video, 0)
+
+	videosFromDB, err := r.read()
+	if err != nil {
+		return make([]entities.Video, 0), err
+	}
+
+	for _, vid := range videosFromDB {
+		if title == "" || strings.Contains(vid.Title, title) {
+			video := entities.Video{
+				ID:                 vid.ID,
+				Title:              vid.Title,
+				Status:             vid.Status,
+				OriginalPath:       vid.OriginalPath,
+				MasterPlaylistPath: vid.MasterPlaylistPath,
+				ThumbnailPath:      vid.ThumbnailPath,
+				DurationSeconds:    vid.DurationSeconds,
+				Width:              int(vid.Width),
+				Height:             int(vid.Height),
+			}
+			videos = append(videos, video)
+		}
+	}
+
+	return videos, nil
 }
 
 func (r *videoJSONFileRepository) FindByID(ctx context.Context, id string) (entities.Video, error) {

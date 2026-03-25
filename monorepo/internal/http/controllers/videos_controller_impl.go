@@ -16,6 +16,10 @@ func NewVideosControllerImpl(videos repositories.VideoRepository) *videosControl
 	}
 }
 
+func (c *videosControllerImpl) Search(title string) ([]entities.Video, error) {
+	return c.videos.FindByTitle(context.Background(), title)
+}
+
 func (c *videosControllerImpl) Get(id string) (entities.Video, error) {
 	return c.videos.FindByID(context.Background(), id)
 }

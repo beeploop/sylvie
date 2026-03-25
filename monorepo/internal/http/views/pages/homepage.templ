@@ -2,13 +2,38 @@ package pages
 
 import "sylvie/internal/http/views/layouts"
 import "sylvie/internal/http/views/components"
+import "fmt"
 
-templ HomePage() {
+type Video struct {
+	ID            string `json:"id"`
+	Title         string `json:"title"`
+	ThumbnailPath string `json:"thumbnail_path"`
+}
+
+type HomepageViewModel struct {
+	Videos []Video `json:"videos"`
+}
+
+templ HomePage(viewmodel HomepageViewModel) {
 	@layouts.Root() {
 		<div>
 			@components.Header()
 			<main class="main">
-				<h1>hello world</h1>
+				<div class="videos-container">
+					for _,video := range viewmodel.Videos {
+						<a
+							href={ fmt.Sprintf("/watch/%s", video.ID) }
+							class="video"
+						>
+							<img
+								src={ video.ThumbnailPath }
+								alt="video thumbnail"
+								class="thumbnail"
+							/>
+							<p class="title">{ video.Title }</p>
+						</a>
+					}
+				</div>
 			</main>
 		</div>
 	}

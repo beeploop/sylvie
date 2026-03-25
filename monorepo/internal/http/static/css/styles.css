@@ -68,6 +68,30 @@
 }
 
 .main {
-    padding-block: 1em;
-    padding-inline: var(--main-padding);
+    padding: 1em;
+
+
+    .videos-container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1em;
+
+        .video {
+            text-decoration: none;
+            color: var(--dark);
+            display: grid;
+            gap: 0.5em;
+
+            .thumbnail {
+                display: grid;
+                aspect-ratio: 16/9;
+                border-radius: 0.25em;
+                background-color: var(--dark);
+            }
+
+            .title {
+                font-weight: 400;
+            }
+        }
+    }
 }
