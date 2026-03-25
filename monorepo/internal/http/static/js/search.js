@@ -11,3 +11,11 @@
         searchForm.submit();
     })
 })();
+
+(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.has("search")) {
+        document.getElementById("input").value = params.get("search");
+        document.getElementById("input").focus();
+    }
+})();
