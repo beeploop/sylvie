@@ -2,7 +2,6 @@ package workers
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"sylvie/internal/config"
@@ -74,8 +73,6 @@ func (m *Manager) Handle(job queue.Job) error {
 		return err
 	}
 
-	resolutions := transcoding.SelectResolutions(metadata.Height)
-
 	{
 		path, err := m.Thumbnails.Generate(transcoding.ThumbnailInput{
 			VideoID:  job.VideoID,
@@ -92,6 +89,7 @@ func (m *Manager) Handle(job queue.Job) error {
 		}
 	}
 
+	resolutions := transcoding.SelectResolutions(metadata.Height)
 	rendetions := make([]transcoding.Rendetion, 0)
 	for _, resolution := range resolutions {
 		rendetion := transcoding.Rendetion{
@@ -101,11 +99,10 @@ func (m *Manager) Handle(job queue.Job) error {
 		}
 		rendetions = append(rendetions, rendetion)
 
-		path, err := m.Transcoder.Transcode(rendetion)
+		_, err := m.Transcoder.Transcode(rendetion)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("path for resolution %s: %s\n", resolution.Name(), path)
 	}
 
 	{
