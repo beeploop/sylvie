@@ -112,6 +112,7 @@ func (m *Manager) Handle(job queue.Job) error {
 		}
 
 		if _, err := m.Videos.Update(ctx, job.VideoID, models.UpdateVideo{
+			Status:             &models.STATUS_READY,
 			MasterPlaylistPath: &path,
 		}); err != nil {
 			return err
