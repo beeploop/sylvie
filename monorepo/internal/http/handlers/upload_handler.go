@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"net/url"
 	"sylvie/internal/http/controllers"
-	"sylvie/internal/http/dtos/response"
 	"sylvie/internal/queue"
 
 	"github.com/labstack/echo/v5"
@@ -14,37 +14,40 @@ func UploadHandler(
 	publisher queue.Publisher,
 ) echo.HandlerFunc {
 	return func(c *echo.Context) error {
+		params := url.Values{}
+		u, _ := url.Parse("/")
+
+		sourceForm := c.FormValue("source_dialog")
+		params.Add("dialog", sourceForm)
+
 		title := c.FormValue("title")
 		if title == "" {
-			return c.JSON(http.StatusBadRequest, map[string]any{
-				"error": "title is required",
-			})
+			params.Add("error", "title required")
+			u.RawQuery = params.Encode()
+			return c.Redirect(http.StatusSeeOther, u.String())
 		}
 
 		file, err := c.FormFile("video")
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]any{
-				"error": "missing video",
-			})
+			params.Add("error", "title required")
+			u.RawQuery = params.Encode()
+			return c.Redirect(http.StatusSeeOther, u.String())
 		}
 
 		video, err := uploadController.Upload(file, title)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]any{
-				"error": "upload failed",
-			})
+			params.Add("error", err.Error())
+			u.RawQuery = params.Encode()
+			return c.Redirect(http.StatusSeeOther, u.String())
 		}
 
 		job := queue.Job{VideoID: video.ID, Path: video.OriginalPath}
 		if err := publisher.Publish(job); err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]any{
-				"error": "failed to publish upload event",
-			})
+			params.Add("error", err.Error())
+			u.RawQuery = params.Encode()
+			return c.Redirect(http.StatusSeeOther, u.String())
 		}
 
-		return c.JSON(http.StatusCreated, response.UploadResponse{
-			VideoID: video.ID,
-			Status:  video.Status,
-		})
+		return c.Redirect(http.StatusSeeOther, u.String())
 	}
 }
