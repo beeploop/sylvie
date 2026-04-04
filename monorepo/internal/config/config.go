@@ -7,6 +7,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var (
+	instance *Config
+)
+
 type DB struct {
 	JSON_DB_PATH string
 }
@@ -38,11 +42,15 @@ type Config struct {
 }
 
 func Load() *Config {
+	if instance != nil {
+		return instance
+	}
+
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("failed to load configuration file: %s\n", err)
 	}
 
-	return &Config{
+	instance = &Config{
 		DB: DB{
 			JSON_DB_PATH: mustLoadEnv("JSON_DB_FILE_PATH", "tmp/db.json"),
 		},
@@ -61,6 +69,8 @@ func Load() *Config {
 			BaseDir: mustLoadEnv("STORAGE_DIR", "tmp"),
 		},
 	}
+
+	return instance
 }
 
 func mustLoadEnv(key string, fallback string) string {

@@ -25,8 +25,14 @@ templ HomePage(viewmodel HomepageViewModel) {
 							href={ fmt.Sprintf("/watch/%s", video.ID) }
 							class="video"
 						>
+							{{ var thumbnail string }}
+							if video.ThumbnailPath == "" {
+								{{ thumbnail = "/assets/images/video_placeholder.webp" }}
+							} else {
+								{{ thumbnail = fmt.Sprintf("/media/%s", video.ThumbnailPath) }}
+							}
 							<img
-								src={ video.ThumbnailPath }
+								src={ thumbnail }
 								alt="video thumbnail"
 								class="thumbnail"
 							/>

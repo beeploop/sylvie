@@ -3,6 +3,7 @@ package http
 import (
 	"embed"
 	"sylvie/internal/application"
+	"sylvie/internal/config"
 	"sylvie/internal/http/handlers"
 
 	"github.com/labstack/echo/v5"
@@ -17,6 +18,7 @@ func registerRoutes(e *echo.Echo, app *application.Application) *echo.Echo {
 	e.StaticFS("/styles", echo.MustSubFS(assets, "static/css"))
 	e.StaticFS("/scripts", echo.MustSubFS(assets, "static/js"))
 	e.StaticFS("/assets", echo.MustSubFS(assets, "static/assets"))
+	e.Static("/media", config.Load().Storage.BaseDir)
 
 	e.GET("/", handlers.Homepage(app.VideosController))
 

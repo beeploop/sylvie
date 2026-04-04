@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 	"slices"
+	"strings"
+	"sylvie/internal/config"
 	"sylvie/internal/http/controllers"
 	"sylvie/internal/http/views/pages"
 	"sylvie/internal/utils"
@@ -35,7 +37,7 @@ func Homepage(videosController controllers.VideosController) echo.HandlerFunc {
 					return pages.Video{
 						ID:            video.ID,
 						Title:         video.Title,
-						ThumbnailPath: video.ThumbnailPath,
+						ThumbnailPath: strings.TrimPrefix(video.ThumbnailPath, config.Load().Storage.BaseDir),
 					}
 				}),
 			),

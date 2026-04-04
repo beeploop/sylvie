@@ -157,7 +157,7 @@
 
     .videos-container {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 1em;
 
         .video {
@@ -177,6 +177,8 @@
                 aspect-ratio: 16/9;
                 border-radius: 0.25em;
                 background-color: var(--dark);
+                width: 100%;
+                object-fit: contain;
             }
 
             .title {
