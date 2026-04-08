@@ -36,6 +36,7 @@ func WatchPage(videosController controllers.VideosController) echo.HandlerFunc {
 
 		viewmodel := pages.WatchpageViewModel{
 			VideoURL: fmt.Sprintf("/media/%s", strings.TrimPrefix(video.MasterPlaylistPath, config.Load().Storage.BaseDir)),
+			Title:    video.Title,
 		}
 
 		return pages.WatchPage(viewmodel).Render(ctx, c.Response())

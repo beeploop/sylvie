@@ -7,6 +7,7 @@ import (
 
 type WatchpageViewModel struct {
 	VideoURL string
+	Title    string
 }
 
 templ WatchPage(viewmodel WatchpageViewModel) {
@@ -23,6 +24,9 @@ templ WatchPage(viewmodel WatchpageViewModel) {
 						controls
 					></video>
 					<div class="additional-controls">
+						<div class="title">
+							<h2>{ viewmodel.Title }</h2>
+						</div>
 						<div class="quality">
 							<label for="quality-selector">Quality:</label>
 							<select id="quality-selector">

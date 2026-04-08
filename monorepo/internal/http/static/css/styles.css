@@ -200,8 +200,18 @@
 
         .additional-controls {
             display: flex;
-            justify-content: end;
+            justify-content: space-between;
             margin-top: 0.5em;
+            gap: 4em;
+
+            .title {
+                width: 80%;
+
+                h2 {
+                    font-weight: bold;
+                    word-wrap: break-word;
+                }
+            }
 
             .quality {
 
