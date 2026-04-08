@@ -22,7 +22,7 @@ templ HomePage(viewmodel HomepageViewModel) {
 				<div class="videos-container">
 					for _,video := range viewmodel.Videos {
 						<a
-							href={ fmt.Sprintf("/watch/%s", video.ID) }
+							href={ fmt.Sprintf("/watch?video=%s", video.ID) }
 							class="video"
 						>
 							{{ var thumbnail string }}

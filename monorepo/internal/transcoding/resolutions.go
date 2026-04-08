@@ -12,12 +12,16 @@ const (
 	RES_1080p Resolution = "1080p"
 	RES_720p  Resolution = "720p"
 	RES_360p  Resolution = "360p"
+	RES_240p  Resolution = "240p"
+	RES_144p  Resolution = "144p"
 )
 
 var AllResolutions = []Resolution{
 	RES_1080p,
 	RES_720p,
 	RES_360p,
+	RES_240p,
+	RES_144p,
 }
 
 func (r Resolution) Name() string {
@@ -32,6 +36,10 @@ func (r Resolution) VideoBitRate() int {
 		return 2_800_000
 	case RES_360p:
 		return 800_000
+	case RES_240p:
+		return 400_000
+	case RES_144p:
+		return 150_000
 	default:
 		return 0
 	}
@@ -45,6 +53,10 @@ func (r Resolution) AudioBitRate() int {
 		return 128_000
 	case RES_360p:
 		return 96_000
+	case RES_240p:
+		return 64_000
+	case RES_144p:
+		return 48_000
 	default:
 		return 0
 	}
@@ -58,6 +70,10 @@ func (r Resolution) Ratio() string {
 		return "1280:720"
 	case RES_360p:
 		return "640:360"
+	case RES_240p:
+		return "426:240"
+	case RES_144p:
+		return "256:144"
 	default:
 		return "unknown resolution"
 	}
@@ -91,8 +107,12 @@ func ResolutionFromName(name string) Resolution {
 		return RES_720p
 	case "360p":
 		return RES_360p
+	case "240p":
+		return RES_240p
+	case "144p":
+		return RES_144p
 	default:
-		return RES_360p
+		return RES_144p
 	}
 }
 
@@ -104,8 +124,12 @@ func ResolutionFromDimension(dimension string) Resolution {
 		return RES_720p
 	case "640x360":
 		return RES_360p
+	case "426x240":
+		return RES_240p
+	case "256x144":
+		return RES_144p
 	default:
-		return RES_360p
+		return RES_144p
 	}
 }
 
