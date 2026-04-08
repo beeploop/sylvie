@@ -49,17 +49,17 @@ func TestResolutions(t *testing.T) {
 			{
 				Name:        "1080p input",
 				InputHeight: 1080,
-				Expected:    []Resolution{RES_1080p, RES_720p, RES_360p},
+				Expected:    []Resolution{RES_1080p, RES_720p, RES_360p, RES_240p, RES_144p},
 			},
 			{
 				Name:        "720p input",
 				InputHeight: 720,
-				Expected:    []Resolution{RES_720p, RES_360p},
+				Expected:    []Resolution{RES_720p, RES_360p, RES_240p, RES_144p},
 			},
 			{
 				Name:        "weird resolution 480",
 				InputHeight: 480,
-				Expected:    []Resolution{RES_360p},
+				Expected:    []Resolution{RES_360p, RES_240p, RES_144p},
 			},
 		}
 
