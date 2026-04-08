@@ -1,3 +1,9 @@
 outputs
 uploads
 resource
+
+**/tmp/
+
+**/.env
+
+**/transcoder_test_input/

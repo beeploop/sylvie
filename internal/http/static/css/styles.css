@@ -1,0 +1,226 @@
+:root {
+    --dark: #000000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.dialog {
+    border: 1px solid var(--dark);
+    border-radius: 0.25em;
+    padding: 1em;
+    margin: auto;
+
+    .content {
+        display: grid;
+        gap: 1em;
+
+        .close {
+            display: flex;
+            justify-content: end;
+
+            .button {
+                padding: 0;
+                border: none;
+                cursor: pointer;
+
+                &:focus {
+                    border: none;
+                    outline: none;
+                }
+
+                svg {
+                    width: 2em;
+                    aspect-ratio: 1/1;
+                }
+            }
+        }
+
+        .form {
+            display: grid;
+            gap: 1em;
+
+            .row {
+                display: grid;
+
+                .input {
+                    padding: 1em 0.5em;
+
+                    &:focus {
+                        outline: none;
+                    }
+                }
+
+                .submit {
+                    padding: 0.5em 0.25em;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
+
+.header {
+    display: flex;
+    gap: 2em;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 1em;
+    padding-block: 0.5em;
+    border-bottom: 1px solid var(--dark);
+
+    .logo {
+        text-decoration: none;
+        color: var(--dark);
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+
+    .search {
+        display: flex;
+        border: 1px solid var(--dark);
+
+        .input,
+        .button {
+            outline: none;
+            border: none;
+            padding-inline: 1em;
+            padding-block: 0.5em;
+        }
+
+        .input {
+            min-width: 20em;
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .button {
+            cursor: pointer;
+            border-left: 1px solid var(--dark);
+            color: var(--dark);
+
+            .icon {
+                width: 1em;
+                aspect-ratio: 1/1;
+            }
+        }
+    }
+
+    .menu {
+        color: var(--dark);
+
+        .icon {
+            padding: 0;
+            border: none;
+            outline: none;
+            cursor: pointer;
+
+            svg {
+                width: 2em;
+                aspect-ratio: 1/1;
+            }
+
+            &:focus {
+                border: none;
+            }
+        }
+
+        .icon.hover--hide {
+            display: block;
+        }
+
+        .icon.hover--show {
+            display: none;
+        }
+
+        &:hover {
+            .icon.hover--hide {
+                display: none
+            }
+
+            .icon.hover--show {
+                display: block;
+            }
+        }
+    }
+}
+
+.main {
+    padding: 1em;
+
+
+    .videos-container {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 1em;
+
+        .video {
+            padding: 0.5em;
+            border-radius: 0.5em;
+            text-decoration: none;
+            color: var(--dark);
+            display: grid;
+            gap: 0.5em;
+
+            &:hover {
+                background-color: lightgrey;
+            }
+
+            .thumbnail {
+                display: grid;
+                aspect-ratio: 16/9;
+                border-radius: 0.25em;
+                background-color: var(--dark);
+                width: 100%;
+                object-fit: contain;
+            }
+
+            .title {
+                font-weight: 400;
+            }
+        }
+    }
+
+    .video-player {
+        height: 80svh;
+        background-color: var(--dark);
+
+        .player {
+            width: 100%;
+            height: inherit;
+            outline: 1px solid var(--dark);
+        }
+
+        .additional-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5em;
+            gap: 4em;
+
+            .title {
+                width: 80%;
+
+                h2 {
+                    font-weight: bold;
+                    word-wrap: break-word;
+                }
+            }
+
+            .quality {
+
+                label,
+                select,
+                option {
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+}

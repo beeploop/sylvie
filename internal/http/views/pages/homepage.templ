@@ -1,0 +1,46 @@
+package pages
+
+import "sylvie/internal/http/views/layouts"
+import "sylvie/internal/http/views/components"
+import "fmt"
+
+type Video struct {
+	ID            string `json:"id"`
+	Title         string `json:"title"`
+	ThumbnailPath string `json:"thumbnail_path"`
+}
+
+type HomepageViewModel struct {
+	Videos []Video `json:"videos"`
+}
+
+templ HomePage(viewmodel HomepageViewModel) {
+	@layouts.Root() {
+		<div>
+			@components.Header()
+			<main class="main">
+				<div class="videos-container">
+					for _,video := range viewmodel.Videos {
+						<a
+							href={ fmt.Sprintf("/watch?video=%s", video.ID) }
+							class="video"
+						>
+							{{ var thumbnail string }}
+							if video.ThumbnailPath == "" {
+								{{ thumbnail = "/assets/images/video_placeholder.webp" }}
+							} else {
+								{{ thumbnail = fmt.Sprintf("/media/%s", video.ThumbnailPath) }}
+							}
+							<img
+								src={ thumbnail }
+								alt="video thumbnail"
+								class="thumbnail"
+							/>
+							<p class="title">{ video.Title }</p>
+						</a>
+					}
+				</div>
+			</main>
+		</div>
+	}
+}
