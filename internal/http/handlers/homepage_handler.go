@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sylvie/internal/config"
 	"sylvie/internal/http/controllers"
-	"sylvie/internal/http/views/pages"
+	"sylvie/internal/http/views/pages/homepage"
 	"sylvie/internal/utils"
 	"sylvie/internal/video/entities"
 
@@ -31,10 +31,10 @@ func Homepage(videosController controllers.VideosController) echo.HandlerFunc {
 			return c.Redirect(http.StatusSeeOther, "/?error="+err.Error())
 		}
 
-		viewmodel := pages.HomepageViewModel{
+		viewmodel := homepage.HomepageViewModel{
 			Videos: slices.Collect(
-				utils.Map(videos, func(video entities.Video) pages.Video {
-					return pages.Video{
+				utils.Map(videos, func(video entities.Video) homepage.Video {
+					return homepage.Video{
 						ID:            video.ID,
 						Title:         video.Title,
 						ThumbnailPath: strings.TrimPrefix(video.ThumbnailPath, config.Load().Storage.BaseDir),
@@ -43,6 +43,6 @@ func Homepage(videosController controllers.VideosController) echo.HandlerFunc {
 			),
 		}
 
-		return pages.HomePage(viewmodel).Render(ctx, c.Response())
+		return homepage.HomePage(viewmodel).Render(ctx, c.Response())
 	}
 }

@@ -1,0 +1,16 @@
+package watchpage
+
+import "sylvie/internal/http/views/layouts"
+import "sylvie/internal/http/views/components"
+
+templ NotReadyPage() {
+	@layouts.Root() {
+		<div>
+			@components.Header()
+			<main class="main">
+				<h1>video is still processing</h1>
+				<a href="/">Go back home</a>
+			</main>
+		</div>
+	}
+}

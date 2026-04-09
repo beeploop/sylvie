@@ -7,7 +7,8 @@ import (
 	"strings"
 	"sylvie/internal/config"
 	"sylvie/internal/http/controllers"
-	"sylvie/internal/http/views/pages"
+	"sylvie/internal/http/views/pages/watchpage"
+	"sylvie/internal/video/models"
 
 	"github.com/labstack/echo/v5"
 )
@@ -34,11 +35,15 @@ func WatchPage(videosController controllers.VideosController) echo.HandlerFunc {
 			return c.Redirect(http.StatusSeeOther, "/watch?"+params.Encode())
 		}
 
-		viewmodel := pages.WatchpageViewModel{
+		if video.Status != string(models.STATUS_READY) {
+			return watchpage.NotReadyPage().Render(ctx, c.Response())
+		}
+
+		viewmodel := watchpage.WatchpageViewModel{
 			VideoURL: fmt.Sprintf("/media/%s", strings.TrimPrefix(video.MasterPlaylistPath, config.Load().Storage.BaseDir)),
 			Title:    video.Title,
 		}
 
-		return pages.WatchPage(viewmodel).Render(ctx, c.Response())
+		return watchpage.WatchPage(viewmodel).Render(ctx, c.Response())
 	}
 }

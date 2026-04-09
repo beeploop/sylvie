@@ -1,8 +1,10 @@
-package pages
+package homepage
 
-import "sylvie/internal/http/views/layouts"
-import "sylvie/internal/http/views/components"
-import "fmt"
+import (
+	"fmt"
+	"sylvie/internal/http/views/components"
+	"sylvie/internal/http/views/layouts"
+)
 
 type Video struct {
 	ID            string `json:"id"`
