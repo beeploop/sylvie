@@ -1,5 +1,6 @@
 :root {
     --dark: #000000;
+    --ligth: #ffffff;
 }
 
 * {
@@ -154,8 +155,9 @@
 
 .main {
     padding: 1em;
+}
 
-
+.main.homepage {
     .videos-container {
         display: grid;
         grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -187,7 +189,9 @@
             }
         }
     }
+}
 
+.main.watchpage {
     .video-player {
         height: 80svh;
         background-color: var(--dark);
@@ -219,6 +223,45 @@
                 select,
                 option {
                     font-weight: bold;
+                }
+            }
+        }
+    }
+}
+
+.main.watchpage.not-ready {
+    .card {
+        max-width: 40svw;
+        margin-inline: auto;
+        margin-block: 10em;
+        text-align: center;
+        display: grid;
+        gap: 1.25em;
+
+        .headline {
+            h2 {
+                font-weight: bold;
+            }
+        }
+
+        .body {
+            display: grid;
+            gap: 1em;
+        }
+
+        .cta {
+            a {
+                display: inline-block;
+                text-decoration: none;
+                background-color: var(--dark);
+                color: var(--ligth);
+                margin: 0;
+                padding: 0.5em;
+                border-radius: 0.25em;
+                cursor: pointer;
+
+                &:hover {
+                    filter: contrast(0.75);
                 }
             }
         }

@@ -59,7 +59,7 @@ func WatchPage(viewmodel WatchpageViewModel) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<main class=\"main\"><div class=\"video-player\"><script src=\"https://cdn.jsdelivr.net/npm/hls.js@latest\"></script><video class=\"player\" id=\"video_player\" data-source=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<main class=\"main watchpage\"><div class=\"video-player\"><script src=\"https://cdn.jsdelivr.net/npm/hls.js@latest\"></script><video class=\"player\" id=\"video_player\" data-source=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

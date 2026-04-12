@@ -20,7 +20,7 @@ templ HomePage(viewmodel HomepageViewModel) {
 	@layouts.Root() {
 		<div>
 			@components.Header()
-			<main class="main">
+			<main class="main homepage">
 				<div class="videos-container">
 					for _,video := range viewmodel.Videos {
 						<a

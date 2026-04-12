@@ -52,7 +52,7 @@ func NotReadyPage() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<main class=\"main\"><h1>video is still processing</h1><a href=\"/\">Go back home</a></main></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<main class=\"main watchpage not-ready\"><div class=\"card\"><div class=\"headline\"><h1>Oops! Video is not ready</h1></div><div class=\"body\"><p>Video is currently being processed in the background. We're making sure it's optimized for the best viewing experience.</p><p>It should be ready soon. Thanks for your patience while we finish getting it set up.</p></div><div class=\"cta\"><a href=\"/\">Go back to videos</a></div></div></main></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
