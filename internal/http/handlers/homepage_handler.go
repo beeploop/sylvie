@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"path/filepath"
 	"slices"
-	"strings"
 	"sylvie/internal/config"
 	"sylvie/internal/http/controllers"
 	"sylvie/internal/http/views/pages/homepage"
@@ -34,10 +34,19 @@ func Homepage(videosController controllers.VideosController) echo.HandlerFunc {
 		viewmodel := homepage.HomepageViewModel{
 			Videos: slices.Collect(
 				utils.Map(videos, func(video entities.Video) homepage.Video {
+					thumbnailPath := ""
+
+					relative, err := filepath.Rel(config.Load().Storage.BaseDir, video.ThumbnailPath)
+					if err != nil {
+						thumbnailPath = "/assets/images/video_placeholder.webp"
+					} else {
+						thumbnailPath = "/media/" + filepath.ToSlash(relative)
+					}
+
 					return homepage.Video{
 						ID:            video.ID,
 						Title:         video.Title,
-						ThumbnailPath: strings.TrimPrefix(video.ThumbnailPath, config.Load().Storage.BaseDir),
+						ThumbnailPath: thumbnailPath,
 					}
 				}),
 			),

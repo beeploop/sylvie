@@ -1,10 +1,9 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
-	"strings"
+	"path/filepath"
 	"sylvie/internal/config"
 	"sylvie/internal/http/controllers"
 	"sylvie/internal/http/views/pages/watchpage"
@@ -39,8 +38,14 @@ func WatchPage(videosController controllers.VideosController) echo.HandlerFunc {
 			return watchpage.NotReadyPage().Render(ctx, c.Response())
 		}
 
+		relative, err := filepath.Rel(config.Load().Storage.BaseDir, video.MasterPlaylistPath)
+		if err != nil {
+			params.Add("error", err.Error())
+			return c.Redirect(http.StatusSeeOther, "/watch?"+params.Encode())
+		}
+
 		viewmodel := watchpage.WatchpageViewModel{
-			VideoURL: fmt.Sprintf("/media/%s", strings.TrimPrefix(video.MasterPlaylistPath, config.Load().Storage.BaseDir)),
+			VideoURL: "/media/" + filepath.ToSlash(relative),
 			Title:    video.Title,
 		}
 
