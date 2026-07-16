@@ -59,3 +59,40 @@ RABBIT_QUEUE_NAME=
 FFMPEG_PATH=
 FFPROBE_PATH=
 ```
+
+## Running with Docker
+
+### Prerequisites
+- Docker
+- Docker compose
+
+### Start the application
+Build the images and start all services.
+
+```bash
+docker compose up -d --build
+```
+
+This command starts:
+- **API** - HTTP Server
+- **Processor** - Background worker that processes transcoding jobs
+- **RabbitMQ** - Message broker (with the management UI)
+
+The API will be available at:
+```
+http://localhost:3000
+```
+
+RabbitMQ management UI:
+```
+http://localhost:15672
+```
+
+Default credentials:
+- Username: `guest`
+- Password: `guest`
+
+### Stopping the application
+```bash
+docker compose down
+```

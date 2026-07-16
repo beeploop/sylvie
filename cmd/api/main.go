@@ -9,9 +9,15 @@ import (
 	"sylvie/internal/config"
 	"sylvie/internal/http"
 	"syscall"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using environment variables")
+	}
+
 	app := application.Bootstrap(config.Load())
 
 	server := http.NewServer(app)

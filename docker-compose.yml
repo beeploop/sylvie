@@ -1,8 +1,77 @@
 services:
   rabbitmq:
-    image: rabbitmq:3.13.7-management
+    image: rabbitmq:management-alpine
     container_name: rabbitmq
     restart: always
+
     ports:
       - "15672:15672"
-      - "5672:5672"
+
+    volumes:
+      - ./rabbitmq-data:/var/lib/rabbitmq
+
+    networks:
+      - sylvie
+
+  api:
+    build:
+      context: .
+      target: api
+
+    image: sylvie-api
+    container_name: sylvie-api
+    restart: unless-stopped
+
+    depends_on:
+      - rabbitmq
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      PORT: ":3000"
+
+      JSON_DB_FILE_PATH: "/data/db.json"
+      STORAGE_DIR: "/data"
+
+      RABBIT_CONNECTION_STR: "amqp://guest:guest@rabbitmq:5672"
+      RABBIT_QUEUE_NAME: "sylvie:transcode"
+
+    volumes:
+      - ./sylvie-storage:/data
+
+    networks:
+      - sylvie
+
+  processor:
+    build:
+      context: .
+      target: processor
+
+    image: sylvie-processor
+    container_name: sylvie-processor
+    restart: unless-stopped
+
+    depends_on:
+      - rabbitmq
+
+    environment:
+      JSON_DB_FILE_PATH: "/data/db.json"
+      STORAGE_DIR: "/data"
+
+      RABBIT_CONNECTION_STR: "amqp://guest:guest@rabbitmq:5672"
+      RABBIT_QUEUE_NAME: "sylvie:transcode"
+
+    volumes:
+      - ./sylvie-storage:/data
+
+    networks:
+      - sylvie
+
+volumes:
+  rabbitmq-data:
+  sylvie-storage:
+
+networks:
+  sylvie:
+    driver: bridge

@@ -1,10 +1,7 @@
 package config
 
 import (
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 var (
@@ -46,17 +43,13 @@ func Load() *Config {
 		return instance
 	}
 
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("failed to load configuration file: %s\n", err)
-	}
-
 	instance = &Config{
 		DB: DB{
 			JSON_DB_PATH: mustLoadEnv("JSON_DB_FILE_PATH", "tmp/db.json"),
 		},
 		FFMPEG: FFMPEG{
-			FfmpegPath:  mustLoadEnv("FFMPEG_PATH", "/usr/bin/ffmpeg"),
-			FfprobePath: mustLoadEnv("FFPROBE_PATH", "/usr/bin/ffprobe"),
+			FfmpegPath:  mustLoadEnv("FFMPEG_PATH", "ffmpeg"),
+			FfprobePath: mustLoadEnv("FFPROBE_PATH", "ffprobe"),
 		},
 		Server: Server{
 			PORT: mustLoadEnv("PORT", ":3000"),

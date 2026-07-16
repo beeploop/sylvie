@@ -8,9 +8,15 @@ import (
 	"sylvie/internal/queue"
 	"sylvie/internal/workers"
 	"syscall"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using environment variables")
+	}
+
 	conn, ch, err := queue.Connect(config.Load().Queue.ConnectionString)
 	if err != nil {
 		log.Fatalf("failed to open connection to rabbitmq: %s\n", err)

@@ -1,9 +1,13 @@
 outputs
 uploads
 resource
+bin/
 
 **/tmp/
 
 **/.env
 
 **/transcoder_test_input/
+
+rabbitmq-data
+sylvie-storage
